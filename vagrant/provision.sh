@@ -16,5 +16,5 @@ sudo npm install -g webpack-cli
 echo "cd /vagrant" >> /home/vagrant/.bashrc
 
 # set hostname, makes console easier to identify
-sudo echo "statix" > /etc/hostname
-sudo echo "127.0.0.1 statix" >> /etc/hosts
+sudo echo "staticBlog" > /etc/hostname
+sudo echo "127.0.0.1 staticBlog" >> /etc/hosts
