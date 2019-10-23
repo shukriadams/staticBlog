@@ -1,6 +1,15 @@
 
+# Static Blog
+
+A tiny blog engine. 
+
+- renders static HTML
+- Posts are written in markdown
+- Markup is written in Handlebars.
+
 ## How to use
 
+- Set site name and other general features in ./settings.env
 - Modify markup in /templates
 - Add CSS to /web/css
 - Add JS to /web/js or /frontend (for webpack)
@@ -14,13 +23,26 @@ Optional settings
 - You can also add "description", which will appear in the RSS feed and on the archive post list.
 - For a post to appear in the menu, add "menu:true"
 
+## Requirements
+
+- NodeJS 8 or higher
+
 ## Setup
 
+    npm install -g yarn
+    npm install -g webpack
+    npm install -g webpack-cli
     npm install
 
 ## Build
 
-    npm run build (or node index to build only html)
+To build html and /frontend run
+
+    npm run build 
+
+To build only html
+    
+    node index
 
 Output is /web
 
@@ -29,8 +51,4 @@ Output is /web
     cd /web
     python -m SimpleHTTPServer 3000
 
-Use any web serving tool you want, I've used python above because of its ubiquity.
-
-## Debug
-
-    node --inspect-brk=0.0.0.0:3001 index.js
+Use any web serving tool you want, I've used Python 2.x above because of its ubiquity.
