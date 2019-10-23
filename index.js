@@ -36,7 +36,7 @@ const htmlFiles = glob.sync(path.join(outFolder, '**/*.html'));
 for (let file of htmlFiles)
     fs.unlinkSync(file);
 
-// partial templates
+// register partial templates
 const partialPaths = glob.sync('./templates/partials/**/*.hbs'); 
 for (let partialPath of partialPaths){
     let content = fs.readFileSync(partialPath, 'utf8'),
@@ -45,7 +45,7 @@ for (let partialPath of partialPaths){
     Handlebars.registerPartial(name, content);
 }
 
-// page templates
+// register page templates
 const pagePaths = glob.sync('./templates/pages/**/*.hbs'); 
 for (let pagePath of pagePaths){
     let content = fs.readFileSync(pagePath, 'utf8'),
@@ -54,7 +54,7 @@ for (let pagePath of pagePaths){
     pages[name] = Handlebars.compile(content);
 }
 
-// helpers
+// register helpers
 const helperPaths = glob.sync('./templates/helpers/**/*.js'); 
 for (let helperPath of helperPaths){
     require(helperPath);
@@ -62,11 +62,11 @@ for (let helperPath of helperPaths){
 
 
 /**
- * markdown models
- * reserved fields for model :
+ * extract models from the top of markdown files
+ * required fields for model :
  * - title
  * - date : must be a parsable Javascript date
- * - markdown : the markdown content of the page
+ * Note as well that the field "markup" is reserved, and will end up containing the markup rendered from markdown content
  */ 
 const markdownPaths = glob.sync('./posts/**/*.md'); 
 for (const markdownPath of markdownPaths){
@@ -76,7 +76,7 @@ for (const markdownPath of markdownPaths){
 
     let lines = content.split('\n');
 
-    // find the position of the dividing line between post data and markup
+    // find the position of the dividing line between post data and markup. dividing line is 3 or more dashes, egs "---"
     let dividerLineCount = null;
     for (let i = 0 ; i < lines.length; i ++){
         if (lines[i].match(/^-+/)){
@@ -90,7 +90,7 @@ for (const markdownPath of markdownPaths){
         continue;
     }
 
-    // read each line from data header into post model
+    // parse each line from data header as a name:value property for model.
     let lineIndex = 0;
     while (lineIndex < dividerLineCount){
         let groups = lines[lineIndex].match(/(.*):(.*)/);
@@ -125,9 +125,10 @@ for (const markdownPath of markdownPaths){
     post.url = `${name}`;
 
     // convert markdown to markup
-    post.markdown = lines.slice(dividerLineCount + 1).join('\n');
-    post.markdown = converter.makeHtml(post.markdown);
+    post.markup = lines.slice(dividerLineCount + 1).join('\n');
+    post.markup = converter.makeHtml(post.markup);
     post.keywords = post.tags.join(',');
+
     posts[name] = post;
 }
 
@@ -136,9 +137,12 @@ if (posts.index){
 }
     
 
-let menuItems = [],
+let tags = {},
+    menuItems = [],
     allPosts = [];
 
+// convert posts object into allPosts array
+// also build up array of posts which must appear as header menu items
 for (const prop in posts){
     let post = posts[prop];
     post.filename = prop;
@@ -148,13 +152,14 @@ for (const prop in posts){
         menuItems.push(post);
 }
 
-// sort al posts descending date
+// sort all posts by descending date
 allPosts = allPosts.sort((a, b)=>{ 
     return a.date > b.date ? -1 :
     a.date < b.date ? 1 :
     0;
 })
 
+// generate html page for each post
 for (let i = 0; i < allPosts.length; i ++){
     let post = allPosts[i],
         previousPost = null;
@@ -171,11 +176,6 @@ for (let i = 0; i < allPosts.length; i ++){
     fs.writeFileSync(postPath, rendered);
     console.log(`Published ${post.filename}`);
 }
-
-
-// archive posts
-paginate(allPosts, 'archive', 'archive', archivePageSize, {}, archiveFolder);
-
 
 // paginates a collection of posts, use for archive pages, tag pages etc
 // items : collection of posts or tags to paginate
@@ -209,16 +209,17 @@ function paginate(items, pageBaseName, pageName, pageSize, model, outFolder){
     }
 }
 
+// create archive pages
+paginate(allPosts, 'archive', 'archive', archivePageSize, {}, archiveFolder);
 
-// tag pages
-let tags = {}
-// get unique list of all tags for all posts
+
+// get unique list of all tags across all posts
 for (const post of allPosts)
     for (const tag of post.tags)
         tags[tag] = '';
 
 
-// tag cloud page
+// create tags page
 let tagCloud = [];
 for (const tag in tags){
     const urlFriendlyTag = tag.replace(/\s/g, '-'),
@@ -238,11 +239,11 @@ for (const tag in tags){
 fs.writeFileSync(path.join(tagsFolder, 'index.html'), pages.tags({ menuItems, blogName : blogName, tags : tagCloud}));
 
 
-// posts as index
+// create index page
 paginate(allPosts, 'index', 'index', pageSize, {}, outFolder);
 
 
-// rss feed
+// create rss feed
 const feed = new RSS({
     title: blogName,
     description: blogDescription,
@@ -263,7 +264,7 @@ for (const post of allPosts)
 fs.writeFileSync(path.join(outFolder, 'rss.xml'), feed.xml());
 
 
-// sitemap
+// create sitemap
 let sitemapUrls = [{ url : 'index.html', changefreq: 'always' /*, priority : '0.1'*/ }];
 for (const post of allPosts){
     sitemapUrls.push({
