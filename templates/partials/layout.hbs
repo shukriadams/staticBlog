@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <link rel='shortcut icon' type='image/x-icon' href='media/img/favicon.png'/>
+        <meta http-equiv="content-type" name="description" content="Shukri Adams Blog">
+        <meta http-equiv="content-type" name="keywords" content="tech, coding, nerdy things, {{post.keywords}}">
+        <title>{{blogName}}</title>
+        {{{block "head"}}}
+        <link rel="stylesheet" href="/css/style.css" type="text/css">
+    </head>
+    <body>
+        <div class="layout">
+            
+            <header class="header">
+                <div class="layout-scaffold">
+                    <div class="header-structure">
+                        <div class="header-logoTitleWrapper">
+                            <a class="" href="/"><h1 class="header-title">{{blogName}}</h1></a>
+                        </div>
+
+                        <ul class="header-menu">
+                            {{#each menuItems}}
+                                <li class="header-menuItem">
+                                    <a class="header-menuItemLink" href="{{url}}.html">
+                                        {{title}}
+                                    </a>
+                                </li>
+                            {{/each}}
+                        </ul>
+
+                        <i class="header-menuToggle">
+                            <img class="header-menuIcon" src="/icons/menu.png" />
+                        </i>
+                        
+                    </div>
+
+                </div>
+            </header>
+
+
+
+            <main class="layout-content">
+                <div class="layout-scaffold">
+                    {{{block "body"}}}
+                </div>
+            </main>
+
+            <footer class="layout-footer">
+                <div class="layout-scaffold">
+                    {{{block "footer"}}}
+                </div>
+            </footer>
+
+        </div>
+        <script src="/js/base.js"></script>
+        <script src="/js/webpack.js"></script>
+    </body>
+</html>

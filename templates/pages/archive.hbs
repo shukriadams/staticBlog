@@ -1,0 +1,44 @@
+{{#extend "layout"}}
+    {{#content "body"}}
+
+        <h1>Older posts</h1>
+
+        {{#each posts}}
+            <div class="archive-item">
+                <a href="/{{url}}.html">{{title}}</a> 
+
+                {{#if description}}
+                    <p>
+                        {{{description}}}
+                    </p>
+                {{/if}}
+
+                <div class="archive-date">
+                    ({{shortDate date}}, {{ago date}})
+                </div>
+            </div>
+        {{/each}}
+
+        <div class="pager">
+            <div class="pager-previous">
+                {{#isDefined prev}}
+                    <a href="/archive/archive{{#neq prev 0}}-{{prev}}{{/neq}}.html">Previous</a>
+                {{/isDefined}}
+            </div>
+            <div class="pager-next">
+                {{#isDefined next}}
+                    <a href="/archive/archive-{{next}}.html">Next</a>
+                {{/isDefined}}
+            </div>
+        </div>
+
+    {{/content}}
+
+    {{#content "footer"}}
+        <a href="/categories">Categories</a> |
+        <a href="/archive/archive.html">All posts</a>
+    {{/content}} 
+
+{{/extend}}
+
+

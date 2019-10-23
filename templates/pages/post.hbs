@@ -1,0 +1,28 @@
+{{#extend "layout"}}
+
+    {{#content "body"}}
+        {{>post post}}
+
+        <div class="pager">
+            <div class="pager-previous">
+                {{#if previousPost}}
+                    Previous :
+                    <a href="{{previousPost.url}}.html">{{previousPost.title}}</a>
+                {{/if}}
+            </div>
+            <div class="pager-next">
+                {{#if nextPost}}
+                    Next : 
+                    <a href="{{nextPost.url}}.html">{{nextPost.title}}</a>
+                {{/if}}
+            </div>
+        </div>        
+
+    {{/content}}
+
+    {{#content "footer"}}
+        <a href="/categories">Categories</a> | 
+        <a href="/archive/archive.html">All posts</a>
+    {{/content}}
+
+{{/extend}}

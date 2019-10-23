@@ -1,0 +1,33 @@
+{{#extend "layout"}}
+
+    {{#content "body"}}
+
+        <div class="index">
+            {{#each posts}}
+                {{>post this}}
+            {{/each}}
+        </div>
+
+        <div class="pager">
+            <div class="pager-previous">
+                {{#isDefined prev}}
+                    <a href="/index{{#neq prev 0}}-{{prev}}{{/neq}}.html">Previous</a>
+                {{/isDefined}}
+            </div>
+            <div class="pager-next">
+                {{#isDefined next}}
+                    <a href="/index-{{next}}.html">Next</a>
+                {{/isDefined}}
+            </div>
+        </div>
+        
+    {{/content}}
+
+    {{#content "footer"}}
+        <a href="/categories">Categories</a> | 
+        <a href="/archive/archive.html">All posts</a>
+    {{/content}}    
+
+{{/extend}}
+
+

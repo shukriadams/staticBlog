@@ -1,0 +1,40 @@
+{
+    "name": "Statix",
+    "version": "0.0.1",
+    "description": "A static blog",
+    "private": false,
+    "author": "shukri.adams@gmail.com",
+    "engines": {
+        "node": ">=8"
+    },
+    "scripts": {
+        "build": "node index && webpack --mode none"
+    },    
+    "license": "MIT",
+    "dependencies" : {
+        "sitemap" : "2.1.0",
+        "css-loader" : "2.1.1",
+        "style-loader": "0.23.1",
+        "highlight.js": "9.15.6",
+        "s-ago" : "2.0.1",
+        "custom-env" : "1.0.0",
+        "rss" : "1.2.2",
+        "url-join" : "4.0.0",
+        "fs-extra": "4.0.1",
+        "jsonfile": "2.0.0",
+        "globby" : "7.1.1",
+        "showdown" : "1.9.0",
+        "handlebars" : "4.0.11",
+        "handlebars-layouts" : "3.1.4",
+        "@babel/core": "7.2.0",
+        "@babel/preset-env": "7.2.0",
+        "@babel/preset-react": "7.0.0",
+        "babel-loader": "8.0.4",
+        "history": "4.7.2",
+        "react": "16.6.3",
+        "react-dom": "16.6.3",
+        "react-router-dom" : "4.2.2",
+        "webpack": "4.27.1",
+        "webpack-cli": "3.1.2"        
+    }
+}

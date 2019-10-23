@@ -1,0 +1,22 @@
+# Server setup : 
+# - linux machine running openssh-server
+# - create a user (sudo adduser), lets call it uploader
+# - create a folder to host blog in, say /var/blog
+# - chown /var/blog for user uploader
+# image needs to have webpack, node, sshpass and scp
+image: shukriadams/node8build:0.0.2
+
+pipelines:
+  branches:
+    master:
+    - step:
+        caches:
+          - node
+        script: # Modify the commands below to build your repository.
+          - npm install
+          - npm run build
+          - ls ./web
+          # clean up
+          # - sshpass -p ${blog_deploy_password} ssh -oStrictHostKeyChecking=no ${blog_deploy_user}@${blog_host} 'rm -rf /var/blog/*'
+          # upload
+          # - sshpass -p ${blog_deploy_password} scp -oStrictHostKeyChecking=no -r ./web/. ${blog_deploy_user}@${blog_host}:/var/blog/

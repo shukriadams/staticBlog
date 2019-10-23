@@ -1,0 +1,17 @@
+<article class="post">
+    <a href="{{url}}.html"><h1>{{title}}</h1></a>
+    
+    {{#if date}}
+        <div class="post-date">   
+            {{shortDate date}} ({{ago date}})
+        </div>
+    {{/if}}
+
+    {{#if tags.length}}
+        <div class="post-tags">
+            Tags : {{{renderTags tags}}}
+        </div>
+    {{/if}}
+
+    {{{markdown}}}
+</article>
