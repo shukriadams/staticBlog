@@ -1,9 +1,6 @@
 /node_modules
-/web/**/*.html
 /vagrant/.vagrant
 /vagrant/ubuntu-xenial-16.04-cloudimg-console.log
-/web/rss.xml
-/.env
 /yarn-error.log
-/web/js/webpack.js
-/web/sitemap.xml
+/web/*
+!/web/static

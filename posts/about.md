@@ -14,7 +14,7 @@ Here's a list
 
 ## An image
 
-![Building](/img/example.jpg "An example image")
+![Building](/static/img/example.jpg "An example image")
 
 This is another paragraph.
 

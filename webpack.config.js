@@ -2,7 +2,7 @@ module.exports = {
     context: __dirname + "/frontend",
     entry: "./index",
 	output: {
-		path: __dirname + "/web/js",
+		path: __dirname + "/web/static/js",
 		filename: "webpack.js"
 	},
     module: {
