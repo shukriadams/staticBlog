@@ -46,7 +46,7 @@ You can use any web serving tool you want, I've listed Python 2.x here because o
 
 ### Post data headers
 
-Posts have the following YML-like header consists of name:value lines, terminated with at least three dashes (---)
+Each post file has a YML-like data header. This header consists of name:value lines, and is terminated with at least three dashes.
    
     title: 10 reasons cats exist, you won't believe 11
     date: 2000-12-25
@@ -58,7 +58,8 @@ Posts have the following YML-like header consists of name:value lines, terminate
     ## Are cats our cosmic overlords?
 
     Here is some fascinating markdown about cats
-    
+
+The following fields are supported :
 
 - title: required field. Used to create post header links and entries on index pages.
 - date : required field. Can be any date format Javascript can parse. Used to chronologically order your posts. You can set to any value you want, this will be the posts' publication date.
