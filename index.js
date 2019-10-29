@@ -12,7 +12,10 @@ const
     Handlebars = require('handlebars'),
     layouts = require('handlebars-layouts'),
     sitemap = require('sitemap'),
-    converter = new showdown.Converter({ tables : true }),
+    stripIndent = require('strip-pre-indent'),
+    converter = new showdown.Converter({ 
+        tables : true 
+    }),
     pages = {},
     posts = {},
     pageSize = parseInt(process.env.pageSize ? process.env.pageSize : '3'),
@@ -205,6 +208,10 @@ for (let i = 0; i < allPosts.length; i ++){
     let rendered = pages.post({ previousPost, nextPost, post, blogName, menuItems });
     let postPath = path.join(outFolder, post.filename) + '.html';
     fs.ensureDirSync(path.dirname(postPath));
+    
+    // strip <pre> indentation, this normalized padded for code blocks etc
+    rendered = stripIndent(rendered);
+
     fs.writeFileSync(postPath, rendered);
     console.log(`Published ${post.filename}`);
 }
