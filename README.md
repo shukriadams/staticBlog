@@ -22,10 +22,20 @@ A tiny blog engine.
 
 ## Setup
 
-    npm install -g yarn
     npm install -g webpack
     npm install -g webpack-cli
     npm install
+
+## Watch
+
+Run
+
+    npm start
+
+to live-build all changes to /frontend and /posts. Content is served at
+
+    http://localhost:3000
+
 
 ## Build
 

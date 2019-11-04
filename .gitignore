@@ -4,3 +4,4 @@
 /yarn-error.log
 /web/*
 !/web/static
+/web/static/js/webpack.js
