@@ -90,6 +90,7 @@ for (const markdownPath of markdownPaths){
     let post = {},
         content = fs.readFileSync(markdownPath, 'utf8'),
         name = markdownPath.substring('./posts'.length).match(/(.*).md/).pop(),
+        dirname = path.dirname(name),
         lines = content.split('\n'); 
 
     // find the position of the dividing line between post data and markup. dividing line is 3 or more dashes, egs "---"
@@ -109,10 +110,12 @@ for (const markdownPath of markdownPaths){
     // parse each line from data header as a name:value property for model.
     let lineIndex = 0;
     while (lineIndex < dividerLineCount){
-        let groups = lines[lineIndex].match(/(.*):(.*)/);
-        
-        if (groups.length !== 3){
+
+
+        let groups = lines[lineIndex].match(/(.*?):(.*)/);
+        if (!groups || groups.length !== 3){
             console.error(`WARNING : ${lines[lineIndex]} in post ${name} is not properly formatted, NAME:VALUE is expected.`);
+            lineIndex++;          
             continue;
         }
         
@@ -128,6 +131,11 @@ for (const markdownPath of markdownPaths){
     // tags are optional, if none are defined, create empty list. tags must be entered as comma-separated
     // list, but are converted to array
     post.tags = post.tags || '';
+    post.hero = post.hero || process.env.defaultHero;
+    // force relative local to relative to container folder
+    if (post.hero.startsWith('./')){
+        post.hero = dirname + '/' + post.hero.substring(2);
+    }
 
     // remove empty items
     post.tags = post.tags.split(',').filter((tag)=>{ return tag.length > 0;}); 
@@ -192,6 +200,16 @@ allPosts = allPosts.sort((a, b)=>{
     a.date < b.date ? 1 :
     0;
 })
+
+
+// assign weight to each post, this is used for rendering size
+for (let i = 0 ; i < allPosts.length ; i ++){
+    let post = allPosts[i];
+    post.weight = i === 0 ? 'Top' :
+        i < 3 ? 'Medium' : 
+        'Standard';
+}
+
 
 // generate html page for each post
 for (let i = 0; i < allPosts.length; i ++){
