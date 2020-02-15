@@ -64,6 +64,7 @@ Each post file has a YML-like data header. This header consists of name:value li
     description: An in-depth analysis into whether cats exist, or do we?
     menu: true
     mycatnames: Cathulu, Innsmeouth, Mountains of Meowdness
+    category: philosophy/existentialist/horror
     ---
     ## Are cats our cosmic overlords?
 
@@ -71,11 +72,12 @@ Each post file has a YML-like data header. This header consists of name:value li
 
 The following fields are supported :
 
-- title: required field. Used to create post header links and entries on index pages.
-- date : required field. Can be any date format Javascript can parse. Used to chronologically order your posts. You can set to any value you want, this will be the posts' publication date.
-- tags: comma-separated list. Used to populate categories page.
-- description : appears in the RSS feed and on the archive list.
-- menu: if set to true, a link to the post will be added to the blog header.
+- title: Used to create post header links and entries on index pages.
+- date : Can be any date format Javascript can parse. Used to chronologically order your posts. You can set to any value you want, this will be the posts' publication date.
+- tags: OPTIONAL. Comma-separated list. Used to populate tags page.
+- description : OPTIONAL. Appears in the RSS feed and on the archive list.
+- menu: OPTIONAL. If set to true, a link to the post will be added to the blog header.
+- category: OPTIONAL. If set, post url will follow folder structure the given string.
 
 ##### Custom date fields
 
@@ -84,5 +86,11 @@ You can add anything to the data header, and use it in your Handlebars templates
     <p>
         {{mycatnames}}
     </p>
-  
 
+### Categories, permalinks, tags, and keywords
+
+Category is primarily an SEO concept. A post should have one category only, but categories can be nested inside other categories, and should ideally go from less to more specific. To achieve categories with this blog engine, organize your posts into folders, with parent folder corresponding to category names. The folder you place a markdown file in can be the post title. You can then place media associated with that post in the same folder. If you follow this nesting convention and name your markdown file **index.md** the engine will create clean urls for you that omit **index.html**. It is strongly suggested you follow this convention, as it allows your blog to support a large number of posts without cluttering the root directory.
+
+Tags are supported. Use the "tags" value in the post data header.
+
+Keywords is just another name for tags. The keywords meta header is rendered from whichever "tags" you've added to a post data header.

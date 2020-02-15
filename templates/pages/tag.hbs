@@ -5,22 +5,22 @@
 
         {{#each posts}}
             <div>
-                <a href="{{url}}.html">{{title}}</a> ({{shortDate date}})
+                <a href="{{url}}">{{title}}</a> ({{shortDate date}})
             </div>
         {{/each}}
 
         {{#isDefined prev}}
-                <a href="/categories/{{urlFriendlyTag}}{{#neq prev 0}}-{{prev}}{{/neq}}.html">Previous</a>
+                <a href="/tags/{{urlFriendlyTag}}{{#neq prev 0}}-{{prev}}{{/neq}}.html">Previous</a>
         {{/isDefined}}
 
         {{#if next}}
-            <a href="/categories/{{urlFriendlyTag}}-{{next}}.html">Next</a>
+            <a href="/tags/{{urlFriendlyTag}}-{{next}}.html">Next</a>
         {{/if}}
 
     {{/content}}
 
     {{#content "footer"}}
-        <a href="/categories">Categories</a> |     
+        <a href="/tags">Tags</a> |     
         <a href="/archive/archive.html">All posts</a>
     {{/content}}       
 

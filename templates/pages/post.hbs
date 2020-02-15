@@ -7,13 +7,13 @@
             <div class="pager-previous">
                 {{#if previousPost}}
                     Previous :
-                    <a href="{{previousPost.url}}.html">{{previousPost.title}}</a>
+                    <a href="{{previousPost.url}}">{{previousPost.title}}</a>
                 {{/if}}
             </div>
             <div class="pager-next">
                 {{#if nextPost}}
                     Next : 
-                    <a href="{{nextPost.url}}.html">{{nextPost.title}}</a>
+                    <a href="{{nextPost.url}}">{{nextPost.title}}</a>
                 {{/if}}
             </div>
         </div>        
@@ -21,7 +21,7 @@
     {{/content}}
 
     {{#content "footer"}}
-        <a href="/categories">Categories</a> | 
+        <a href="/tags">Tags</a> | 
         <a href="/archive/archive.html">All posts</a>
     {{/content}}
 

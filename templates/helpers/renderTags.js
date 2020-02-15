@@ -5,7 +5,7 @@ Handlebars.registerHelper('renderTags', function(tags){
     
     for (let i = 0 ; i < tags.length ; i ++){
         let url = tags[i].replace(/\s/g, '-');
-        output += `<a href=/categories/${url}.html>${tags[i]}</a>`
+        output += `<a href=/tags/${url}.html>${tags[i]}</a>`
         if (i < tags.length - 1)
             output += ', ';
     }

@@ -3,8 +3,7 @@ date : 2019-03-08
 tags : post
 ---
 
-            # Standard "frontend dev" container with Node, Ruby, grunt, yarn, and jspm.
-    # Do your work in /usr/app
+
     FROM alpine:3.7
 
     RUN apk update &&\
