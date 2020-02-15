@@ -21,13 +21,15 @@
                         </div>
 
                         <ul class="header-menu">
-                            <li class="header-menuItem">
+                            
+                            <li class="header-menuItem header-menuItemSearch">
                                 <a class="header-menuItemLink">
                                     <a class="header-searchToggle">
                                         <img src="/static/icons/search.png" />
                                     </a>
                                 </a>
                             </li>
+
                             {{#each menuItems}}
                                 <li class="header-menuItem">
                                     <a class="header-menuItemLink" href="{{url}}">
@@ -37,8 +39,14 @@
                             {{/each}}
                         </ul>
 
-                        <i class="header-menuToggle">
+
+
+                        <i class="header-menuToggle header-menuToggleMenu">
                             <img class="header-menuIcon" src="/static/icons/menu.png" />
+                        </i>
+
+                        <i class="header-menuToggle header-menuToggleSearch">
+                            <img class="header-menuIcon" src="/static/icons/search.png" />
                         </i>
                     </div>
                     <div class="header-searchBar">

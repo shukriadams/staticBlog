@@ -24,16 +24,12 @@ const seachToggle = document.querySelector('.header-searchToggle'),
     searchField = document.querySelector('.header-searchField'),
     searchTrigger = document.querySelector('.header-search'),
     searchResults = document.querySelector('.header-searchResults'),
-    searchBar = document.querySelector('.header-searchBar'); 
+    searchBar = document.querySelector('.header-searchBar'),
+    header = document.querySelector('.header'),
+    body = document.querySelector('body');
+; 
 
-seachToggle.addEventListener('click', function(){
-    
-    if (searchBar.classList.contains('header-searchBar--visible'))
-        searchBar.classList.remove('header-searchBar--visible');
-    else
-        searchBar.classList.add('header-searchBar--visible');
-        
-}, false);
+seachToggle.addEventListener('click', toggleSearch, false);
 
 searchField.addEventListener('keydown', function(event){
     if (event.keyCode === 13)
@@ -41,6 +37,13 @@ searchField.addEventListener('keydown', function(event){
 }, false);
 
 searchTrigger.addEventListener('click', doSearch, false);
+
+function toggleSearch(){
+    if (searchBar.classList.contains('header-searchBar--visible'))
+        searchBar.classList.remove('header-searchBar--visible');
+    else
+        searchBar.classList.add('header-searchBar--visible');
+}
 
 function doSearch(){
     if (!searchField.value)
@@ -73,6 +76,30 @@ function doSearch(){
 
     searchResults.innerHTML = resultsHtml;
 }
+
+
+
+
+function toggleMenu(){
+    if (header.classList.contains('header--open')){
+        header.classList.remove('header--open');
+        body.classList.remove('bodyScrollLock');
+    }
+    else{
+        header.classList.add('header--open');
+        body.classList.add('bodyScrollLock');
+    }
+}
+
+function onClick(e){
+    if (e.target.classList.contains('header-menuToggleMenu'))
+        toggleMenu(e);
+
+    if (e.target.classList.contains('header-menuToggleSearch'))
+        toggleSearch();
+}
+
+document.addEventListener('click', onClick, false);
 
 /*
 window.idx.search('DocKer',{
