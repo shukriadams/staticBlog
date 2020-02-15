@@ -4,29 +4,30 @@ require('custom-env').env();
 const 
     glob = require('glob'),
     path = require('path'),
-    RSS = require('rss'),
     fs = require('fs-extra'),
-    urljoin = require('url-join'),
     process = require('process'),
     showdown  = require('showdown'),
     Handlebars = require('handlebars'),
     layouts = require('handlebars-layouts'),
-    sitemap = require('sitemap'),
     stripIndent = require('strip-pre-indent'),
+    fsUtils = require('madscience-fsUtils'),
+    paginate = require('./lib/paginate'),
     converter = new showdown.Converter({ 
         tables : true 
     }),
-    pages = {},
+    templates = {},
     posts = {},
     pageSize = parseInt(process.env.pageSize ? process.env.pageSize : '3'),
     archivePageSize = parseInt(process.env.archivePageSize ? process.env.archivePageSize : '3'),
     blogName = process.env.blogName ? process.env.blogName.trim() : 'Your blog name here', 
     blogDescription = process.env.blogDescription ? process.env.blogDescription.trim() : 'Your blog description here', 
     outFolder = './web',
-    baseurl = process.env.baseurl ? process.env.baseurl.trim() : 'https://example.com',
+    baseUrl = process.env.baseurl ? process.env.baseurl.trim() : 'https://example.com',
     // categories and archives are placed in their own folders to avoid collision with posts
     tagsFolder = path.join(outFolder, 'categories'),
     archiveFolder = path.join(outFolder, 'archive');
+
+
 
 fs.ensureDirSync(outFolder);
 fs.ensureDirSync(tagsFolder);
@@ -56,13 +57,13 @@ for (let partialPath of partialPaths){
     Handlebars.registerPartial(name, content);
 }
 
-// register page templates
+// register templates
 const pagePaths = glob.sync('./templates/pages/**/*.hbs'); 
 for (let pagePath of pagePaths){
     let content = fs.readFileSync(pagePath, 'utf8'),
         name = path.basename(pagePath).match(/(.*).hbs/).pop(); 
 
-    pages[name] = Handlebars.compile(content);
+    templates[name] = Handlebars.compile(content);
 }
 
 // register helpers
@@ -70,7 +71,6 @@ const helperPaths = glob.sync('./templates/helpers/**/*.js');
 for (let helperPath of helperPaths){
     require(helperPath);
 }
-
 
 
 /**
@@ -131,7 +131,8 @@ for (const markdownPath of markdownPaths){
     // tags are optional, if none are defined, create empty list. tags must be entered as comma-separated
     // list, but are converted to array
     post.tags = post.tags || '';
-    post.hero = post.hero || process.env.defaultHero;
+    post.hero = post.hero || process.env.defaultHero || '';
+
     // force relative local to relative to container folder
     if (post.hero.startsWith('./')){
         post.hero = dirname + '/' + post.hero.substring(2);
@@ -223,7 +224,7 @@ for (let i = 0; i < allPosts.length; i ++){
     if (i < allPosts.length -1)
         nextPost = allPosts[i + 1];
 
-    let rendered = pages.post({ previousPost, nextPost, post, blogName, menuItems });
+    let rendered = templates.post({ previousPost, nextPost, post, blogName, menuItems });
     let postPath = path.join(outFolder, post.filename) + '.html';
     fs.ensureDirSync(path.dirname(postPath));
     
@@ -234,40 +235,21 @@ for (let i = 0; i < allPosts.length; i ++){
     console.log(`Published ${post.filename}`);
 }
 
-// paginates a collection of posts, use for archive pages, tag pages etc
-// items : collection of posts or tags to paginate
-function paginate(items, pageBaseName, pageName, pageSize, model, outFolder){
-    let index = 0;
+// context is the "public" data that will be sent to all plugins. This needs to contain everything that plugins
+// need to do their work
+let context = {
+    blogName,
+    blogDescription,
+    baseUrl,
+    outFolder,
+    posts: allPosts,
+    menuItems,
+    templates
+};
 
-    while (true){
-        const page = items.slice(index * pageSize, index * pageSize + pageSize),
-            nextPage = items.slice((index + 1) * pageSize, (index + 1) * pageSize + pageSize);
-
-        if (!page.length)
-            break;
-
-        model.posts = page;
-        model.blogName = blogName;
-        model.menuItems = menuItems;
-
-        model.prev = undefined;
-        if (index > 0)
-            model.prev = index - 1;
-
-        model.next = undefined;
-        if (nextPage.length)
-            model.next = index + 1;
-
-        const rendered = pages[pageName](model);
-        
-        fs.writeFileSync(path.join(outFolder, `${pageBaseName}${index ? `-${index}` : ''}.html`), rendered);
-
-        index ++;
-    }
-}
 
 // create archive pages
-paginate(allPosts, 'archive', 'archive', archivePageSize, {}, archiveFolder);
+paginate(context, allPosts, 'archive', 'archive', archivePageSize, {}, archiveFolder);
 
 
 // get unique list of all tags across all posts
@@ -282,7 +264,7 @@ for (const tag in tags){
     const urlFriendlyTag = tag.replace(/\s/g, '-'),
         postsWithTag = allPosts.filter((post)=> { return post.tags.includes(tag) });
 
-    paginate(postsWithTag, urlFriendlyTag, 'tag', archivePageSize, { title : tag, urlFriendlyTag }, tagsFolder);
+    paginate(context, postsWithTag, urlFriendlyTag, 'tag', archivePageSize, { title : tag, urlFriendlyTag }, tagsFolder);
     console.log(`Published index page(s) for tag ${tag}`);
 
     tagCloud.push({
@@ -293,51 +275,22 @@ for (const tag in tags){
 }
 
 // tags page
-fs.writeFileSync(path.join(tagsFolder, 'index.html'), pages.tags({ menuItems, blogName : blogName, tags : tagCloud}));
-
+fs.writeFileSync(path.join(tagsFolder, 'index.html'), templates.tags({ menuItems, blogName : blogName, tags : tagCloud}));
 
 // create index page
-paginate(allPosts, 'index', 'index', pageSize, {}, outFolder);
+paginate(context, allPosts, 'index', 'index', pageSize, {}, outFolder);
 
 
-// create rss feed
-const feed = new RSS({
-    title: blogName,
-    description: blogDescription,
-    feed_url: urljoin(baseurl, `rss.xml`),
-    site_url: baseurl,
-    copyright: new Date().getFullYear()
-});
 
-for (const post of allPosts)
-    feed.item({
-        title: post.title,
-        description: post.description,
-        url: urljoin(baseurl, `${post.url}.html`),
-        categories: post.tags,
-        date: post.date
-    });
-
-fs.writeFileSync(path.join(outFolder, 'rss.xml'), feed.xml());
-
-
-// create sitemap
-let sitemapUrls = [{ url : 'index.html', changefreq: 'always' /*, priority : '0.1'*/ }];
-for (const post of allPosts){
-    sitemapUrls.push({
-        url : urljoin(baseurl, `${post.url}.html`),
-        changefreq : 'monthly'/*,
-        priority : '0.5'*/
-    });
+const plugins = fsUtils.readFilesUnderDirSync('./lib/plugins');
+for(let pluginPath of plugins){
+    try {
+        pluginPath = fsUtils.fullPathWithoutExtension(pluginPath);
+        const plugin = require(`./${pluginPath}`);
+        plugin(context);
+        console.log(`Ran plugin ${fsUtils.fileNameWithoutExtension(pluginPath)}`);
+    }catch(ex){
+        console.error(`Error running plugin ${pluginPath}`);
+        console.error(ex);
+    }
 }
-
-let map = sitemap.createSitemap({  
-    hostname: baseurl,
-    urls: sitemapUrls    
-});
-map.toXML( function(err, xml){ 
-    if (err) 
-        console.log(xml) 
-});
-fs.writeFileSync(path.join(outFolder, 'sitemap.xml'), map.toString());
-console.log('Done');
