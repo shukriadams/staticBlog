@@ -34,6 +34,7 @@
         "@babel/core": "7.2.0",
         "@babel/preset-env": "7.2.0",
         "@babel/preset-react": "7.0.0",
+        "elasticlunr": "0.9.5",
         "babel-loader": "8.0.4",
         "history": "4.7.2",
         "react": "16.6.3",

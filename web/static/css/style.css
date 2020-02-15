@@ -166,6 +166,46 @@ Header
     user-select: none;
 }
 
+.header-searchToggle {
+    cursor: pointer;
+    position: relative;
+    top: 6px;
+}
+
+.header-searchBar {
+    display: none;
+    position: absolute;
+    background-color: var(--color-mineshaft);
+    border-radius: 0 0 8px 8px;
+    top: var(--headerHeight);
+    left: 0;
+    right: 0;
+    min-height: 48px;
+    padding: var(--margin);
+}
+
+.header-searchField {
+    width: calc(100% - 100px);
+}
+
+.header-searchBar.header-searchBar--visible {
+    display: block;
+}
+
+.header-seachBarRow{
+    padding-bottom: var(--margin);
+}
+
+.header-searchResults {
+    color: var(--color-white);
+    padding: var(--margin);
+    padding-top: 0;
+}
+
+.header-searchResults a {
+    color: var(--color-pomegranate);
+}
+
 /* above small */
 @media all and (min-width: 768px) {
     .header {

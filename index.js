@@ -159,9 +159,10 @@ for (const postPath of postPaths){
     if (prettifyUrls && post.url.toLowerCase().endsWith('/index.html'))
         post.url = path.dirname(postNameOnDisk);
 
-    // convert markdown (everything after model divider line) into HTML
-    post.markup = lines.slice(dividerLineCount + 1).join('\n');
-    post.markup = converter.makeHtml(post.markup);
+    // markdown is everything after data line divider
+    post.markdown = lines.slice(dividerLineCount + 1).join('\n');
+
+    post.markup = converter.makeHtml(post.markdown);
 
     // keywords are primarily intended for metadata, and are simply the concatenated tag list
     post.keywords = post.tags.join(',');
