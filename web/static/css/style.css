@@ -41,7 +41,7 @@ h1, h2, h3, h4 {
 }
 
 h1 {
-    font-size: 2em;
+    font-size: 32px;
 }
 
 h1, h2, h3, p, ul, ol {
@@ -65,14 +65,6 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
-/* below small */
-@media all and (max-width: 767px) {
-    h1 {
-        font-size: 20px;
-    }
-}
-
 
 
 /*#############################################################################
@@ -172,6 +164,10 @@ Header
     top: 6px;
 }
 
+.header-searchToggleImg {
+    width: 22px;
+}
+
 .header-searchBar {
     display: none;
     position: absolute;
@@ -210,10 +206,6 @@ Header
 @media all and (min-width: 768px) {
     .header {
         vertical-align: middle;
-    }
-
-    .header-title{
-        font-size: 50px;
     }
 
     .header-scaffold {
@@ -267,10 +259,6 @@ Header
     
     .header.header--open .header-menuToggleMenu .header-menuIcon {
         transform: rotate(90deg);
-    }
-
-    .header-title{
-        font-size: 40px;
     }
 
     .header-logoTitleWrapper {
@@ -386,10 +374,6 @@ Post
 .post-date {
     padding-top: calc(var(--verticalRhythm) / 2);
     font-size: 12px;
-}
-
-.post-tags {
-    font-weight: bold;
 }
 
 .post h1, 

@@ -103,7 +103,7 @@ document.addEventListener('click', function onClick(e){
     if (e.target.classList.contains('header-menuToggleMenu'))
         toggleMenu(e);
 
-    if (e.target.classList.contains('header-menuToggleSearch'))
+    if (e.target.classList.contains('header-menuToggleSearch') || e.target.parentNode.classList.contains('header-searchToggle'))
         toggleSearch();
 
 }, false);
