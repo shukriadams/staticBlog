@@ -29,7 +29,7 @@
         "express": "4.16.3",
         "strip-pre-indent": "1.0.0",
         "showdown": "1.9.0",
-        "handlebars": "4.4.3",
+        "handlebars": "4.7.3",
         "handlebars-layouts": "3.1.4",
         "@babel/core": "7.2.0",
         "@babel/preset-env": "7.2.0",
