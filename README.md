@@ -6,6 +6,7 @@ A tiny blog engine.
 - renders static HTML
 - Posts are written in markdown
 - Markup is written in Handlebars.
+- Clientside search through all post text
 - RSS feed
 
 ## How to use
@@ -36,19 +37,18 @@ to live-build all changes to /frontend and /posts. Content is served at
 
     http://localhost:3000
 
-
-## Build
-
-Run
-
-    npm run build 
-
-output is /web. View it locally with
+If you want to serve the content with another webserver (say Python)
 
     cd /web
     python -m SimpleHTTPServer 3000
 
-You can use any web serving tool you want, I've listed Python 2.x here because of its ubiquity.
+## Build only
+
+To build all blog posts (such as in your CI/CD system) run
+
+    npm run build 
+
+output is /web. 
 
 ## Post structure
 
