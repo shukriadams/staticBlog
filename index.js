@@ -220,10 +220,10 @@ for (let i = 0; i < posts.length; i ++){
         nextPost = null;
 
     if (i > 0)
-        previousPost = posts[i - 1];
+        nextPost = posts[i - 1];
 
     if (i < posts.length -1)
-        nextPost = posts[i + 1];
+        previousPost = posts[i + 1];
 
     let rendered = templates.post({ previousPost, nextPost, post, blogName, menuItems });
     let postPath =`${path.join(outFolder, post.filename)}.html`;

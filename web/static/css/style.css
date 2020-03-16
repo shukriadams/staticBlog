@@ -109,8 +109,8 @@ Header
 }
 
 .bodyScrollLock {
-    /*overflow: hidden;
-    height: 100%;*/
+    overflow: hidden;
+    height: 100%;
 }
 
 .header-logoTitleWrapper {
@@ -265,7 +265,7 @@ Header
         overflow-y: auto;
     }
     
-    .header.header--open .header-menuIcon {
+    .header.header--open .header-menuToggleMenu .header-menuIcon {
         transform: rotate(90deg);
     }
 
