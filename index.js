@@ -130,8 +130,8 @@ module.exports = async (options = {})=>{
         }
 
         if (!post.title){
-            console.error(`WARNING : post "${postNameOnDisk}" has an empty title, it won't be published.`);
-            continue;
+            console.error(`WARNING : post "${postNameOnDisk}" has an empty title, it won't be published.`)
+            continue
         }
 
         // tags are optional, if none are defined, create empty list. tags must be entered as comma-separated
