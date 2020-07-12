@@ -7,3 +7,4 @@
 /web/static/js/webpack.js
 /yarn.lock
 /package-lock.json
+.vscode/launch.json
