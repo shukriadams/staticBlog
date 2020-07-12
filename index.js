@@ -1,37 +1,38 @@
-// load .env file first, this will be used to define consts below
-require('custom-env').env()
-let 
-    glob = require('glob'),
-    path = require('path'),
-    fs = require('fs-extra'),
-    process = require('process'),
-    showdown  = require('showdown'),
-    Handlebars = require('handlebars'),
-    layouts = require('handlebars-layouts'),
-    stripIndent = require('strip-pre-indent'),
-    fsUtils = require('madscience-fsUtils'),
-    paginate = require('./lib/paginate'),
-    converter = new showdown.Converter({ 
-        tables : true 
-    }),
-    templates = {},
-    postsHash = {},
-    posts = [],
-    tags = {},
-    menuItems = [],
-    pageSize = parseInt(process.env.PAGE_SIZE ? process.env.PAGE_SIZE : '3'),
-    archivePageSize = parseInt(process.env.ARCHIVE_PAGE_SIZE ? process.env.ARCHIVE_PAGE_SIZE : '3'),
-    blogName = process.env.BLOG_NAME ? process.env.BLOG_NAME.trim() : 'Your blog name here', 
-    blogDescription = process.env.BLOG_DESCRIPTION ? process.env.BLOG_DESCRIPTION.trim() : 'Your blog description here', 
-    prettifyUrls = process.env.PRETTIFY_URLS ? process.env.PRETTIFY_URLS === 'true' : true,
-    staticContentFileGlob = process.env.STATIC_CONTENT_GLOB ? process.env.STATIC_CONTENT_GLOB.trim() : '**/*.{png,gif,jpg}',
-    baseUrl = process.env.BASE_URL ? process.env.BASE_URL.trim() : 'https://example.com',
-    defaultHero = process.env.DEFAULT_HERO ? process.env.DEFAULT_HERO.trim() : ''
-    // tags and archives are placed in their own folders to avoid collision with posts
-
-
 module.exports = async (options = {})=>{
+
+    // load .env file first, this will be used to define consts below
+    require('custom-env').env()
+
+    let 
+        glob = require('glob'),
+        path = require('path'),
+        fs = require('fs-extra'),
+        process = require('process'),
+        showdown  = require('showdown'),
+        Handlebars = require('handlebars'),
+        layouts = require('handlebars-layouts'),
+        stripIndent = require('strip-pre-indent'),
+        fsUtils = require('madscience-fsUtils'),
+        paginate = require('./lib/paginate'),
+        converter = new showdown.Converter({ 
+            tables : true 
+        }),
+        templates = {},
+        postsHash = {},
+        posts = [],
+        tags = {},
+        menuItems = []
+        // tags and archives are placed in their own folders to avoid collision with posts
+
     const opts = Object.assign({
+            defaultHero : '',
+            baseUrl :'https://example.com',
+            staticContentFileGlob : '**/*.{png,gif,jpg}',
+            prettifyUrls: true,
+            blogDescription  : 'Your blog description here',
+            blogName : 'Your blog name here', 
+            pageSize : 10,
+            archivePageSize : 10,
             templatesFolder : path.join(process.cwd(), 'templates'),
             markdownFolder : path.join(process.cwd(), 'posts'),
             outFolder : path.join(process.cwd(), 'web'),
@@ -86,7 +87,9 @@ module.exports = async (options = {})=>{
      * - date : must be a parsable Javascript date
      * Note as well that the field "markup" is reserved, and will end up containing the markup rendered from markdown content
      */ 
-    const postPaths = glob.sync(path.join(opts.markdownFolder, '**/*.md'))
+    const markdownFolder = path.resolve(opts.markdownFolder),
+        postPaths = glob.sync(path.join(markdownFolder, '**/*.md'))
+
     console.log(`found ${postPaths.length} posts to render.`)
 
     for (const postPath of postPaths){
@@ -95,10 +98,10 @@ module.exports = async (options = {})=>{
             content = fs.readFileSync(postPath, 'utf8'),
             lines = content.split('\n'),
             // post url is its entire path under ./posts, minus extension, for example "./posts/foo/bar.md" becomes "/foo/bar".
-            postNameOnDisk = postPath.substring(opts.markdownFolder.length).match(/(.*).md/).pop() // remove leading "/posts" and file extension
+            postNameOnDisk = postPath.substring(markdownFolder.length).match(/(.*).md/).pop() // remove leading "/posts" and file extension
 
         // find the position of the dividing line between post data and markup. dividing line is 3 or more dashes, egs "---"
-        let dividerLineCount = null;
+        let dividerLineCount = null
         for (let i = 0; i < lines.length; i ++){
             if (lines[i].match(/^-+/)){
                 dividerLineCount = i
@@ -117,13 +120,13 @@ module.exports = async (options = {})=>{
 
             let groups = lines[lineIndex].match(/(.*?):(.*)/);
             if (!groups || groups.length !== 3){
-                console.error(`WARNING : ${lines[lineIndex]} in post ${postNameOnDisk} is not properly formatted, NAME:VALUE is expected.`);
-                lineIndex++;          
-                continue;
+                console.error(`WARNING : ${lines[lineIndex]} in post ${postNameOnDisk} is not properly formatted, NAME:VALUE is expected.`)
+                lineIndex ++
+                continue
             }
             
-            post[groups[1].trim()] = groups[2].trim();
-            lineIndex++;          
+            post[groups[1].trim()] = groups[2].trim()
+            lineIndex ++
         }
 
         if (!post.title){
@@ -133,8 +136,8 @@ module.exports = async (options = {})=>{
 
         // tags are optional, if none are defined, create empty list. tags must be entered as comma-separated
         // list, but are converted to array
-        post.tags = post.tags || '';
-        post.hero = post.hero || defaultHero;
+        post.tags = post.tags || ''
+        post.hero = post.hero || opts.defaultHero
 
 
         // force hero path to be relative to post, if the hero path starts with './'
@@ -156,7 +159,7 @@ module.exports = async (options = {})=>{
 
         // post url is locked to the relative path+name of its markdown file
         post.url = `${postNameOnDisk}.html`;
-        if (prettifyUrls && post.url.toLowerCase().endsWith('/index.html'))
+        if (opts.prettifyUrls && post.url.toLowerCase().endsWith('/index.html'))
             post.url = path.dirname(postNameOnDisk);
 
         // markdown is everything after data line divider
@@ -178,9 +181,9 @@ module.exports = async (options = {})=>{
 
 
     // sync static files from ./posts folder 
-    const staticFiles = glob.sync(path.join(opts.markdownFolder, `${staticContentFileGlob}`)) 
+    const staticFiles = glob.sync(path.join(markdownFolder, `${opts.staticContentFileGlob}`)) 
     for (const syncFile of staticFiles){
-        const targetFile = syncFile.substring(opts.markdownFolder.length),
+        const targetFile = syncFile.substring(markdownFolder.length),
             targetPath = path.join(opts.outFolder, targetFile)
             
         fs.copySync(syncFile, targetPath)
@@ -228,7 +231,7 @@ module.exports = async (options = {})=>{
         if (i < posts.length -1)
             previousPost = posts[i + 1];
 
-        let rendered = templates.post({ previousPost, nextPost, post, blogName, menuItems });
+        let rendered = templates.post({ previousPost, nextPost, post, blogName : opts.blogName, menuItems });
         let postPath =`${path.join(opts.outFolder, post.filename)}.html`;
         fs.ensureDirSync(path.dirname(postPath));
         
@@ -242,9 +245,9 @@ module.exports = async (options = {})=>{
     // context is the "public" data that will be sent to all plugins. This needs to contain everything that plugins
     // need to do their work
     let context = {
-        blogName,
-        blogDescription,
-        baseUrl,
+        blogName : opts.blogName,
+        blogDescription : opts.blogDescription,
+        baseUrl : opts.baseUrl,
         outFolder : opts.outFolder,
         posts,
         menuItems,
@@ -253,7 +256,7 @@ module.exports = async (options = {})=>{
 
 
     // create archive pages
-    paginate(context, posts, 'archive', 'archive', archivePageSize, {}, archiveFolder);
+    paginate(context, posts, 'archive', 'archive', opts.archivePageSize, {}, archiveFolder);
 
 
     // get unique list of all tags across all posts
@@ -268,7 +271,7 @@ module.exports = async (options = {})=>{
         const urlFriendlyTag = tag.replace(/\s/g, '-'),
             postsWithTag = posts.filter((post)=> { return post.tags.includes(tag) });
 
-        paginate(context, postsWithTag, urlFriendlyTag, 'tag', archivePageSize, { title : tag, urlFriendlyTag }, tagsFolder);
+        paginate(context, postsWithTag, urlFriendlyTag, 'tag', opts.archivePageSize, { title : tag, urlFriendlyTag }, tagsFolder);
         console.log(`Published index page(s) for tag ${tag}`);
 
         tagCloud.push({
@@ -279,17 +282,17 @@ module.exports = async (options = {})=>{
     }
 
     // tags page
-    fs.writeFileSync(path.join(tagsFolder, 'index.html'), templates.tags({ menuItems, blogName : blogName, tags : tagCloud}));
+    fs.writeFileSync(path.join(tagsFolder, 'index.html'), templates.tags({ menuItems, blogName : opts.blogName, tags : tagCloud}));
 
     // create index page
-    paginate(context, posts, 'index', 'index', pageSize, {}, opts.outFolder);
+    paginate(context, posts, 'index', 'index', opts.pageSize, {}, opts.outFolder);
 
 
-    const plugins = fsUtils.readFilesUnderDirSync('./lib/plugins');
+    const plugins = fsUtils.readFilesUnderDirSync(path.join(__dirname, 'lib/plugins'));
     for(let pluginPath of plugins){
         try {
             pluginPath = fsUtils.fullPathWithoutExtension(pluginPath);
-            const plugin = require(`./${pluginPath}`);
+            const plugin = require(pluginPath)
             plugin(context);
             console.log(`Ran ${fsUtils.fileNameWithoutExtension(pluginPath)} plugin`);
         }catch(ex){
