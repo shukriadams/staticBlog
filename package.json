@@ -1,6 +1,6 @@
 {
     "name": "staticblog",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "description": "A static blog generator",
     "private": false,
     "license": "MIT",
@@ -14,7 +14,6 @@
         "style-loader": "0.23.1",
         "highlight.js": "9.15.6",
         "s-ago": "2.0.1",
-        "custom-env": "1.0.0",
         "chokidar": "2.1.5",
         "cross-spawn": "6.0.5",
         "rss": "1.2.2",

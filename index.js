@@ -1,8 +1,5 @@
 module.exports = async (options = {})=>{
 
-    // load .env file first, this will be used to define consts below
-    require('custom-env').env()
-
     let 
         glob = require('glob'),
         path = require('path'),
@@ -22,7 +19,6 @@ module.exports = async (options = {})=>{
         posts = [],
         tags = {},
         menuItems = []
-        // tags and archives are placed in their own folders to avoid collision with posts
 
     const opts = Object.assign({
             defaultHero : '',
