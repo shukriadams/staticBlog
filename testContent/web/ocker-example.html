@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <link rel='shortcut icon' type='image/x-icon' href='/static/img/favicon.png'/>
+        <meta http-equiv="content-type" name="description" content="Blogname">
+        <meta http-equiv="content-type" name="keywords" content="post">
+        <title>Blogname</title>
+        
+        <link rel="stylesheet" href="/static/css/style.css" type="text/css">
+    </head>
+    <body>
+        <div class="layout">
+            
+            <header class="header">
+                <div class="layout-scaffold">
+                    <div class="header-structure">
+                        <div class="header-logoTitleWrapper">
+                            <a class="" href="/"><h1 class="header-title">Blogname</h1></a>
+                        </div>
+
+                        <ul class="header-menu">
+                            
+                            <li class="header-menuItem header-menuItemSearch">
+                                <a class="header-menuItemLink">
+                                    <a class="header-searchToggle">
+                                        <img class="header-searchToggleImg" src="/static/icons/search.png" />
+                                    </a>
+                                </a>
+                            </li>
+
+                                <li class="header-menuItem">
+                                    <a class="header-menuItemLink" href="bout.html">
+                                        About
+                                    </a>
+                                </li>
+                                <li class="header-menuItem">
+                                    <a class="header-menuItemLink" href="inks.html">
+                                        Links
+                                    </a>
+                                </li>
+                        </ul>
+
+
+
+                        <i class="header-menuToggle header-menuToggleMenu">
+                            <img class="header-menuIcon" src="/static/icons/menu.png" />
+                        </i>
+
+                        <i class="header-menuToggle header-menuToggleSearch">
+                            <img class="header-menuIcon" src="/static/icons/search.png" />
+                        </i>
+                    </div>
+                    <div class="header-searchBar">
+                        <div class="header-seachBarRow">
+                            <input class="header-searchField" type="text" />
+                            <button class="header-search">Search</button>
+                        </div>
+                        <div class="header-seachBarRow">
+                            <div class="header-searchResults"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+
+
+            <main class="layout-content">
+                <div class="layout-scaffold">
+                            <article class="post">
+        
+        
+        
+            <a href="ocker-example.html"><h1>Docker example</h1></a>
+            
+                <div class="post-date">   
+                    2019-03-08 (last year)
+                </div>
+        
+                <div class="post-tags">
+                    Tags : <a href=/tags/post.html>post</a>
+                </div>
+        
+            <p>here is a docker file</p>
+<pre><code>FROM alpine:3.7
+
+RUN apk update &amp;&amp;\
+    apk upgrade &amp;&amp;\
+    apk add git &amp;&amp;\
+    apk add openssh &amp;&amp;\
+    apk add bash &amp;&amp;\
+    apk add python &amp;&amp;\
+    apk add nodejs=8.9.3-r1 &amp;&amp;\
+    apk add ruby=2.4.4-r0 &amp;&amp;\
+    apk add --update ruby-dev &amp;&amp;\
+    apk add ruby-rdoc &amp;&amp;\
+    apk add ruby-irb &amp;&amp;\
+    apk add --update build-base libffi-dev &amp;&amp;\
+    gem update --system &amp;&amp;\
+    gem install scss_lint &amp;&amp;\
+    npm install grunt -g &amp;&amp;\
+    npm install uglify-es -g &amp;&amp;\
+    npm install yarn -g &amp;&amp;\
+    npm install jspm -g &amp;&amp;\
+    mkdir -p /usr/build/src
+</code></pre>
+        </article>
+        <div class="pager">
+            <div class="pager-previous">
+                    Previous :
+                    <a href="avascript-code.html">Javascript Code</a>
+            </div>
+            <div class="pager-next">
+                    Next : 
+                    <a href="y-category/relative-hero">Relative hero image</a>
+            </div>
+        </div>        
+
+
+                </div>
+            </main>
+
+            <footer class="layout-footer">
+                <div class="layout-scaffold">
+                            <a href="/tags">Tags</a> | 
+        <a href="/archive/archive.html">All posts</a>
+
+                </div>
+            </footer>
+
+        </div>
+        <script src="/static/js/base.js"></script>
+        <script src="/static/js/webpack.js"></script>
+    </body>
+</html>

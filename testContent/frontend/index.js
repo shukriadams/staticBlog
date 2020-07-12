@@ -25,8 +25,8 @@ const searchField = document.querySelector('.header-searchField'),
     searchResults = document.querySelector('.header-searchResults'),
     searchBar = document.querySelector('.header-searchBar'),
     header = document.querySelector('.header'),
-    body = document.querySelector('body');
-; 
+    body = document.querySelector('body')
+ 
 
 /**
  * Search can be started by hitting enter on search field, or clicking the search button.

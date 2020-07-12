@@ -73,9 +73,11 @@ module.exports = async (options = {})=>{
 
     // Handlebars : register helpers
     const helperPaths = glob.sync(path.join(opts.templatesFolder, 'helpers/**/*.js')) 
-    for (const helperPath of helperPaths)
-        require(helperPath);
-
+    for (const helperPath of helperPaths){
+        let commonJSPath = path.resolve(helperPath)
+        commonJSPath = commonJSPath.substring(0, commonJSPath.length - 3)
+        require(commonJSPath)
+    }
 
     /**
      * extract models from the top of markdown files

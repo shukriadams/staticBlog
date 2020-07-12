@@ -1,17 +1,13 @@
 {
     "name": "staticblog",
-    "version": "0.0.1",
-    "description": "A static blog",
+    "version": "1.0.0",
+    "description": "A static blog generator",
     "private": false,
+    "license": "MIT",
     "author": "shukri.adams@gmail.com",
     "engines": {
         "node": ">=8"
     },
-    "scripts": {
-        "build": "node index && webpack --mode none",
-        "start": "node ./lib/watch.js"
-    },
-    "license": "MIT",
     "dependencies": {
         "sitemap": "2.1.0",
         "css-loader": "2.1.1",
