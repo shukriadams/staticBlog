@@ -1,1 +1,1 @@
-This is an invalid post, it won't render because it's missing a header.
+This post has no header, it will be rendered only if header checks are disabled.

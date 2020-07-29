@@ -29,6 +29,7 @@ module.exports = async (options = {})=>{
             blogName : 'Your blog name here', 
             pageSize : 10,
             archivePageSize : 10,
+            allowHeaderless : false,
             themeFolder : path.join(__dirname, 'theme'),
             markdownFolder : path.join(__dirname, 'posts'),
             outFolder : path.join(__dirname, 'web'),
@@ -111,29 +112,31 @@ module.exports = async (options = {})=>{
             }
         }
 
-        if (!dividerLineCount){
+        if (!opts.allowHeaderless && !dividerLineCount){
             console.log(`WARNING : post ${postNameOnDisk} does not contain a valid data header, it won't be published.`)
             continue
         }
 
         // parse each line from data header as a name:value property for model.
-        let lineIndex = 0
-        while (lineIndex < dividerLineCount){
-
-            let groups = lines[lineIndex].match(/(.*?):(.*)/);
-            if (!groups || groups.length !== 3){
-                console.error(`WARNING : ${lines[lineIndex]} in post ${postNameOnDisk} is not properly formatted, NAME:VALUE is expected.`)
+        if (dividerLineCount){
+            let lineIndex = 0
+            while (lineIndex < dividerLineCount){
+    
+                let groups = lines[lineIndex].match(/(.*?):(.*)/);
+                if (!groups || groups.length !== 3){
+                    console.error(`WARNING : ${lines[lineIndex]} in post ${postNameOnDisk} is not properly formatted, NAME:VALUE is expected.`)
+                    lineIndex ++
+                    continue
+                }
+                
+                post[groups[1].trim()] = groups[2].trim()
                 lineIndex ++
-                continue
             }
-            
-            post[groups[1].trim()] = groups[2].trim()
-            lineIndex ++
         }
 
         if (!post.title){
-            console.error(`WARNING : post "${postNameOnDisk}" has an empty title, it won't be published.`)
-            continue
+            post.title = fsUtils.fileNameWithoutExtension(postPath)
+            console.error(`WARNING : post "${postNameOnDisk}" has an empty title, falling back to filename.`)
         }
 
         // tags are optional, if none are defined, create empty list. tags must be entered as comma-separated
@@ -155,8 +158,9 @@ module.exports = async (options = {})=>{
         // force convert date string to date object. Any valid JS datestring is valid.
         post.date = new Date(post.date);
         if (isNaN(post.date)){
-            console.error(`WARNING : post ${postNameOnDisk} has an invalid or missing date, it won't be published.`);
-            continue;
+            const stats = fs.statSync(postPath)
+            post.date = stats.mtime
+            console.error(`WARNING : post ${postNameOnDisk} has an invalid or missing date, falling back to file date.`)
         }
 
         // post url is locked to the relative path+name of its markdown file
