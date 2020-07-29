@@ -103,10 +103,10 @@ module.exports = async (options = {})=>{
             // post url is its entire path under ./posts, minus extension, for example "./posts/foo/bar.md" becomes "/foo/bar".
             postNameOnDisk = postPath.substring(markdownFolder.length).match(/(.*).md/).pop() // remove leading "/posts" and file extension
 
-        // find the position of the dividing line between post data and markup. dividing line is 3 or more dashes, egs "---"
+        // find the position of the dividing line between post data and markup. dividing line is 3 or more dashes
         let dividerLineCount = null
         for (let i = 0; i < lines.length; i ++){
-            if (lines[i].match(/^-+/)){
+            if (lines[i].match(/-{3,}/)){
                 dividerLineCount = i
                 break
             }
