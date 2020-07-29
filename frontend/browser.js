@@ -1,3 +1,6 @@
+/**
+ * Include this in your browser code for search and other functionality to work
+*/
 import elasticlunr from 'elasticlunr';
 import hljs from 'highlight.js/lib/highlight';
 import 'highlight.js/styles/atom-one-dark.css';

@@ -1,7 +1,7 @@
 (async()=>{
     const blogEngine = require('./index')
     await blogEngine({
-        templatesFolder : './example/templates',
+        themeFolder : './theme',
         markdownFolder : './example/posts',
         outFolder : './example/web',
     })

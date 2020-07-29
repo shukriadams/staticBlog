@@ -29,16 +29,22 @@ module.exports = async (options = {})=>{
             blogName : 'Your blog name here', 
             pageSize : 10,
             archivePageSize : 10,
-            templatesFolder : path.join(process.cwd(), 'templates'),
-            markdownFolder : path.join(process.cwd(), 'posts'),
-            outFolder : path.join(process.cwd(), 'web'),
+            themeFolder : path.join(__dirname, 'theme'),
+            markdownFolder : path.join(__dirname, 'posts'),
+            outFolder : path.join(__dirname, 'web'),
             // to make it easier to develop locally you can host static assets (css, js, images etc) in your output folder without having
             // these be destroyed by the build process' cleanup
             outProtectedFolders : ['**/static/**']
         }, options),
         tagsFolder = path.join(opts.outFolder, 'tags'),
         archiveFolder = path.join(opts.outFolder, 'archive')
-        
+    
+    opts.staticFolder = path.join(opts.themeFolder, 'static')
+    opts.templatesFolder = path.join(opts.themeFolder, 'templates')
+    if (!await fs.exists(opts.templatesFolder))
+        return console.log(`Expected templates folder not found @ ${opts.templatesFolder}`)
+
+    
     fs.ensureDirSync(opts.outFolder)
     fs.ensureDirSync(tagsFolder)
     fs.ensureDirSync(archiveFolder)
@@ -281,19 +287,22 @@ module.exports = async (options = {})=>{
     fs.writeFileSync(path.join(tagsFolder, 'index.html'), templates.tags({ menuItems, blogName : opts.blogName, tags : tagCloud}));
 
     // create index page
-    paginate(context, posts, 'index', 'index', opts.pageSize, {}, opts.outFolder);
+    paginate(context, posts, 'index', 'index', opts.pageSize, {}, opts.outFolder)
 
+    // if static folder exists in theme, copy all to deploy path
+    if (await fs.exists(opts.staticFolder))
+        await fs.copy(opts.staticFolder, path.join(opts.outFolder, 'static'))
 
-    const plugins = fsUtils.readFilesUnderDirSync(path.join(__dirname, 'lib/plugins'));
+    const plugins = fsUtils.readFilesUnderDirSync(path.join(__dirname, 'lib/plugins'))
     for(let pluginPath of plugins){
         try {
             pluginPath = fsUtils.fullPathWithoutExtension(pluginPath);
             const plugin = require(pluginPath)
-            plugin(context);
-            console.log(`Ran ${fsUtils.fileNameWithoutExtension(pluginPath)} plugin`);
+            plugin(context)
+            console.log(`Ran ${fsUtils.fileNameWithoutExtension(pluginPath)} plugin`)
         }catch(ex){
-            console.error(`Error running plugin ${pluginPath}`);
-            console.error(ex);
+            console.error(`Error running plugin ${pluginPath}`)
+            console.error(ex)
         }
     }
 

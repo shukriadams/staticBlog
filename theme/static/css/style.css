@@ -1,0 +1,383 @@
+/*#############################################################################
+BASE STYLE
+#############################################################################*/
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css?family=Suez+One');
+
+:root {
+    --color-mercury: #e9e9e9;
+    --color-mineshaft: #212121;
+    --color-silver: #bababa;
+    --color-meteor: #C47211;
+    --color-white: #fcfcfc;
+    --color-black: #1f1f1f;
+    --color-pomegranate: #eb5613;
+    --verticalRhythm: 24px;
+    --headerHeight: 64px;
+    --footerHeight: 100px;
+    --margin: 8px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    background-color: var(--color-white);
+    color: var(--color-black);
+    height: 100%;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    height: 100%;
+    margin: 0;
+}
+
+h1, h2, h3, h4 {
+    font-family : 'Suez One', serif;
+}
+
+h1 {
+    font-size: 32px;
+}
+
+h1, h2, h3, p, ul, ol {
+    margin: 0;
+    padding: 0;
+}
+
+ul, ol {
+    padding-left: calc(var(--margin) * 2);
+}
+
+li {
+    padding-top: calc(var(--verticalRhythm) / 2);
+}
+
+a {
+    color: var(--color-pomegranate);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/*#############################################################################
+Archive
+#############################################################################*/
+.archive-item {
+    padding-top: var(--verticalRhythm);
+}
+
+.archive-date{
+    color: var(--color-silver);
+}
+
+/*#############################################################################
+Header
+#############################################################################*/
+.header {
+    background-color: var(--color-black);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--headerHeight);
+    z-index: 1;
+}
+
+.header a {
+    color: var(--color-white);
+}
+
+/* give header its fixed size */
+.header-structure{
+    height: var(--headerHeight);
+}
+
+.bodyScrollLock {
+    overflow: hidden;
+    height: 100%;
+}
+
+.header-logoTitleWrapper {
+    transform: translateY(-50%);
+    position: relative;
+    top: 50%;
+}
+
+.header-logo {
+    display: inline-block;
+}
+
+.header-title {
+    transform: translateY(-50%);
+    display: inline-block;
+    position: absolute;
+    text-decoration: none;
+    top: 50%;
+    white-space: nowrap;
+}
+
+.header-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.header-menuToggle {
+    cursor: pointer;
+    float: right;
+    top: 14px;
+    position: relative;
+    padding-left: 14px;    
+}
+
+.header-menuItem {
+    position: relative;
+    white-space: nowrap;
+    margin: 0;
+    overflow-y: hidden;
+    padding: 0;    
+}
+
+.header-menuItemLink {
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    padding: 0 var(--margin);
+}
+
+.header-menuIcon {
+    pointer-events: none;
+    width: 32px;
+    user-select: none;
+}
+
+.header-searchToggle {
+    cursor: pointer;
+    position: relative;
+    top: 6px;
+}
+
+.header-searchToggleImg {
+    width: 22px;
+}
+
+.header-searchBar {
+    display: none;
+    position: absolute;
+    background-color: var(--color-mineshaft);
+    border-radius: 0 0 8px 8px;
+    top: var(--headerHeight);
+    left: 0;
+    right: 0;
+    min-height: 48px;
+    padding: var(--margin);
+}
+
+.header-searchBar.header-searchBar--visible {
+    display: block;
+}
+
+.header-searchField {
+    width: calc(100% - 100px);
+}
+
+.header-seachBarRow{
+    padding-bottom: var(--margin);
+}
+
+.header-searchResults {
+    color: var(--color-white);
+    padding: var(--margin);
+    padding-top: 0;
+}
+
+.header-searchResults a {
+    color: var(--color-pomegranate);
+}
+
+/* above small */
+@media all and (min-width: 768px) {
+    .header {
+        vertical-align: middle;
+    }
+
+    .header-scaffold {
+        text-align: right;
+    }
+
+    .header-menu {
+        transform: translateY(-50%);
+        display: inline-block;
+        padding: 0;
+        position: absolute;
+        margin: 0;
+        right: var(--margin);
+        top: 50%;
+    }
+
+    .header-menuToggle {
+        display: none;
+    }
+
+    .header-menuItem {
+        display: inline-block;
+        height: 100%;
+        text-align: center;
+        padding: 0 var(--margin);
+    }
+
+    .header-menuItemLink {
+        height: 100%;
+    }
+}
+
+/* below small */
+@media all and (max-width: 767px) {
+    .header a {
+        text-decoration: none;
+    }
+
+    .header.header--open .header-menu {
+        background-color: var(--color-silver);
+        position: fixed;
+        z-index: 1;
+        max-height: none;
+        top: var(--headerHeight);
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    
+    .header.header--open .header-menuToggleMenu .header-menuIcon {
+        transform: rotate(90deg);
+    }
+
+    .header-logoTitleWrapper {
+        left: 0;
+    }
+
+    .header-menu {
+        max-height: 0;
+        overflow: hidden;
+    }
+
+    .header-menuItem {
+        height: 60px;
+        border-top: 1px solid var(--color-white);
+        position: relative;
+
+    }
+
+    .header-menuItemLink {
+        transform: translateY(-50%);
+        position: absolute;
+        top: 50%;
+        font-size: 30PX;
+        font-weight: bold;
+    }
+
+    .header-menuItemSearch {
+        display: none;
+    }
+}
+
+
+
+/*#############################################################################
+Index
+#############################################################################*/
+.index .post:not(:last-of-type){
+    border-bottom: 1px solid var(--color-silver);
+}
+
+
+/*#############################################################################
+Layout
+#############################################################################*/
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    position: relative;
+}
+
+.layout-content {
+    flex: 1;
+    padding-top: calc(var(--headerHeight) * 2);
+}
+
+.layout-scaffold {
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--margin);
+    padding-right: var(--margin);
+    position: relative;
+}
+
+.layout-footer {
+    height: var(--footerHeight);
+    background-color: var(--color-black);
+    padding: 24px 0 var(--margin);
+    text-align: center;
+}
+
+
+
+/*#############################################################################
+Pager
+#############################################################################*/
+.pager {
+    display: table;
+    width: 100%;
+}
+
+.pager-previous {
+    display: table-cell;
+    padding: var(--verticalRhythm) 0;
+    width: 50%;
+}
+
+.pager-next {
+    display: table-cell;
+    padding: var(--verticalRhythm) 0;
+    text-align: right;
+    width: 50%;
+}
+
+
+/*#############################################################################
+Post
+#############################################################################*/
+.post {
+    position: relative;
+    padding-bottom: calc(var(--verticalRhythm) * 2);
+}
+
+.post p {
+    padding-top: var(--verticalRhythm);
+}
+
+.post img {
+    width: 100%;
+}
+
+.post-date {
+    padding-top: calc(var(--verticalRhythm) / 2);
+    font-size: 12px;
+}
+
+.post h1, 
+.post h2, 
+.post h3 {
+    padding-top: var(--verticalRhythm);
+}
