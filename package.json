@@ -1,24 +1,19 @@
 {
     "name": "staticblog",
     "version": "0.0.1",
-    "description": "A static blog",
+    "description": "A static blog generator",
     "private": false,
+    "license": "MIT",
     "author": "shukri.adams@gmail.com",
     "engines": {
         "node": ">=8"
     },
-    "scripts": {
-        "build": "node index && webpack --mode none",
-        "start": "node ./lib/watch.js"
-    },
-    "license": "MIT",
     "dependencies": {
         "sitemap": "2.1.0",
         "css-loader": "2.1.1",
         "style-loader": "0.23.1",
         "highlight.js": "9.15.6",
         "s-ago": "2.0.1",
-        "custom-env": "1.0.0",
         "chokidar": "2.1.5",
         "cross-spawn": "6.0.5",
         "rss": "1.2.2",

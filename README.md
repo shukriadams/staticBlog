@@ -11,6 +11,31 @@ A tiny blog engine.
 
 ## How to use
 
+Add to package.json :
+
+    {
+        {
+            "dependencies": {
+                "staticblog": "https://github.com/shukriadams/staticblog.git#0.0.1"
+        }
+    }
+
+Use
+
+Assuming your blog project has /templates and /posts
+
+    (async()=>{
+        const blogEngine = require('staticblog')
+        await blogEngine({
+            templatesFolder : './templates',
+            markdownFolder : './posts',
+            outFolder : './web',
+            blogName : 'My blog'
+            blogDescription : 'Your blog description here',
+            baseUrl : 'https://example.com
+        })
+    })()
+
 - Set site name and other general features in /settings.env
 - Modify markup in /templates
 - Add CSS to /web/static/css

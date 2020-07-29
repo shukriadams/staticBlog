@@ -1,0 +1,1 @@
+This post has no header, it will be rendered only if header checks are disabled.
