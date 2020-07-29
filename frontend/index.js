@@ -78,14 +78,23 @@ function search(){
 }
 
 
+function openSearch(){
+    searchBar.classList.add('header-searchBar--visible')
+}
+
+function closeSearch(){
+    searchBar.classList.remove('header-searchBar--visible');
+
+}
+
 /**
  * Opens or closes the search panel.
  */
 function toggleSearch(){
     if (searchBar.classList.contains('header-searchBar--visible'))
-        searchBar.classList.remove('header-searchBar--visible');
+        closeSearch()
     else
-        searchBar.classList.add('header-searchBar--visible');
+        openSearch()
 }
 
 /**
@@ -93,8 +102,8 @@ function toggleSearch(){
  */
 function toggleMenu(){
     if (header.classList.contains('header--open')){
-        header.classList.remove('header--open');
-        body.classList.remove('bodyScrollLock');
+        header.classList.remove('header--open')
+        body.classList.remove('bodyScrollLock')
     }
     else{
         header.classList.add('header--open');
@@ -104,9 +113,12 @@ function toggleMenu(){
 
 document.addEventListener('click', function onClick(e){
     if (e.target.classList.contains('header-menuToggleMenu'))
-        toggleMenu(e);
+        toggleMenu()
+
+    if (!searchBar.contains(e.target))
+        closeSearch()
 
     if (e.target.classList.contains('header-menuToggleSearch') || e.target.parentNode.classList.contains('header-searchToggle'))
-        toggleSearch();
+        toggleSearch()
 
-}, false);
+}, false)
