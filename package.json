@@ -8,6 +8,9 @@
     "engines": {
         "node": ">=8"
     },
+    "scripts" : {
+        "build" : "webpack --mode none"
+    },
     "dependencies": {
         "sitemap": "2.1.0",
         "css-loader": "2.1.1",

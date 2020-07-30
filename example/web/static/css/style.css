@@ -2,7 +2,7 @@
 BASE STYLE
 #############################################################################*/
 @import url('https://fonts.googleapis.com/css?family=Nunito');
-@import url('https://fonts.googleapis.com/css?family=Suez+One');
+@import url('https://fonts.googleapis.com/css?family=Quattrocento@700');
 
 :root {
     --color-mercury: #e9e9e9;
@@ -13,7 +13,8 @@ BASE STYLE
     --color-black: #1f1f1f;
     --color-pomegranate: #eb5613;
     --verticalRhythm: 24px;
-    --headerHeight: 64px;
+    --layoutWidth: 1280px;
+    --headerHeight: 84px;
     --footerHeight: 100px;
     --margin: 8px;
 }
@@ -31,13 +32,15 @@ html {
 }
 
 body {
+    background-color: var(--color-mercury);
     font-family: 'Nunito', sans-serif;
-    height: 100%;
+    min-height: 100vh;
+    display: grid;
     margin: 0;
 }
 
 h1, h2, h3, h4 {
-    font-family : 'Suez One', serif;
+    font-family : 'Quattrocento', serif;
 }
 
 h1 {
@@ -316,7 +319,7 @@ Layout
 }
 
 .layout-scaffold {
-    max-width: 1024px;
+    max-width: var(--layoutWidth);
     margin-left: auto;
     margin-right: auto;
     padding-left: var(--margin);
@@ -327,7 +330,7 @@ Layout
 .layout-footer {
     height: var(--footerHeight);
     background-color: var(--color-black);
-    padding: 24px 0 var(--margin);
+    padding: 40px 0 var(--margin);
     text-align: center;
 }
 

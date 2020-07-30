@@ -100,41 +100,46 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var highlight_js_lib_languages_javascript__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(highlight_js_lib_languages_javascript__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var highlight_js_lib_languages_dockerfile__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(9);
 /* harmony import */ var highlight_js_lib_languages_dockerfile__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(highlight_js_lib_languages_dockerfile__WEBPACK_IMPORTED_MODULE_4__);
+/**
+ * Include this in your browser code for search and other functionality to work
+*/
 
 
 
 
+ // do code highlighting - add additional languages here
 
 highlight_js_lib_highlight__WEBPACK_IMPORTED_MODULE_1___default.a.registerLanguage('javascript', highlight_js_lib_languages_javascript__WEBPACK_IMPORTED_MODULE_3___default.a);
 highlight_js_lib_highlight__WEBPACK_IMPORTED_MODULE_1___default.a.registerLanguage('dockerfile', highlight_js_lib_languages_dockerfile__WEBPACK_IMPORTED_MODULE_4___default.a);
-highlight_js_lib_highlight__WEBPACK_IMPORTED_MODULE_1___default.a.initHighlightingOnLoad();
-let search = null;
+highlight_js_lib_highlight__WEBPACK_IMPORTED_MODULE_1___default.a.initHighlightingOnLoad(); // load index data in __index.json and pipe this into elasticlunr, the search engine. 
+
+let searchEngine = null;
 fetch('/__index.json').then(response => {
   return response.json();
 }).then(myJson => {
-  search = elasticlunr__WEBPACK_IMPORTED_MODULE_0___default.a.Index.load(JSON.parse(myJson));
+  searchEngine = elasticlunr__WEBPACK_IMPORTED_MODULE_0___default.a.Index.load(JSON.parse(myJson));
 });
-const seachToggle = document.querySelector('.header-searchToggle'),
-      searchField = document.querySelector('.header-searchField'),
+const searchField = document.querySelector('.header-searchField'),
       searchTrigger = document.querySelector('.header-search'),
       searchResults = document.querySelector('.header-searchResults'),
       searchBar = document.querySelector('.header-searchBar'),
       header = document.querySelector('.header'),
       body = document.querySelector('body');
-;
-seachToggle.addEventListener('click', toggleSearch, false);
+/**
+ * Search can be started by hitting enter on search field, or clicking the search button.
+ */
+
 searchField.addEventListener('keydown', function (event) {
-  if (event.keyCode === 13) doSearch();
+  if (event.keyCode === 13) search();
 }, false);
-searchTrigger.addEventListener('click', doSearch, false);
+searchTrigger.addEventListener('click', search, false);
+/**
+ * Performs a search, displays results in top-docked overlay.
+ */
 
-function toggleSearch() {
-  if (searchBar.classList.contains('header-searchBar--visible')) searchBar.classList.remove('header-searchBar--visible');else searchBar.classList.add('header-searchBar--visible');
-}
-
-function doSearch() {
+function search() {
   if (!searchField.value) return;
-  let results = search.search(searchField.value, {
+  let results = searchEngine.search(searchField.value, {
     fields: {
       tags: {
         boost: 3
@@ -153,7 +158,7 @@ function doSearch() {
     resultsHtml = `Found ${results.length} post(s).`;
 
     for (let result of results) {
-      let doc = search.documentStore.getDoc(result.ref);
+      let doc = searchEngine.documentStore.getDoc(result.ref);
       resultsHtml += `
                 <div class="header-searchResult">
                     <a href="${doc.id}">${doc.title}</a>
@@ -168,6 +173,26 @@ function doSearch() {
   searchResults.innerHTML = resultsHtml;
 }
 
+function openSearch() {
+  searchBar.classList.add('header-searchBar--visible');
+}
+
+function closeSearch() {
+  searchBar.classList.remove('header-searchBar--visible');
+}
+/**
+ * Opens or closes the search panel.
+ */
+
+
+function toggleSearch() {
+  if (searchBar.classList.contains('header-searchBar--visible')) closeSearch();else openSearch();
+}
+/**
+ * Opens or closes the mobile menu
+ */
+
+
 function toggleMenu() {
   if (header.classList.contains('header--open')) {
     header.classList.remove('header--open');
@@ -178,21 +203,11 @@ function toggleMenu() {
   }
 }
 
-function onClick(e) {
-  if (e.target.classList.contains('header-menuToggleMenu')) toggleMenu(e);
-  if (e.target.classList.contains('header-menuToggleSearch')) toggleSearch();
-}
-
-document.addEventListener('click', onClick, false);
-/*
-window.idx.search('DocKer',{
-    fields: {
-        tags: {boost: 3},
-        title: {boost: 2},
-        body: {boost: 1}
-    }
-});
-*/
+document.addEventListener('click', function onClick(e) {
+  if (e.target.classList.contains('header-menuToggleMenu')) toggleMenu();
+  if (!searchBar.contains(e.target)) closeSearch();
+  if (e.target.classList.contains('header-menuToggleSearch') || e.target.parentNode.classList.contains('header-searchToggle')) toggleSearch();
+}, false);
 
 /***/ }),
 /* 1 */
