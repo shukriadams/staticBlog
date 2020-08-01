@@ -1,99 +1,67 @@
 
 # Static Blog
 
-A tiny blog engine. 
+Makes a blog out of any markdown files. 
 
-- renders static HTML
-- Posts are written in markdown
-- Markup is written in Handlebars.
-- Clientside search through all post text
-- RSS feed
+- Store your markdown files in git, organized by folder
+- supports static assets like image files
+- renders static HTML so you can host on even the simplest web server
+- Markup is written in Handlebars, and can be organized as separate, re-useable themes
+- Supports tags
+- Supports pinning of posts to header
+- Includes support for client-side text search 
+- Includes RSS feed
 
-## How to use
 
-Add to package.json :
+## Simple use
+
+Add to your package.json 
 
     {
-        {
-            "dependencies": {
-                "staticblog": "https://github.com/shukriadams/staticblog.git#0.0.1"
+       "dependencies": {
+                "staticblog": "https://github.com/shukriadams/staticblog.git#1.0.0"
         }
     }
 
-Use
-
-Assuming your blog project has /templates and /posts
+In a .js file, point it to a folder containing markdown files, and specify an output folder
 
     (async()=>{
         const blogEngine = require('staticblog')
         await blogEngine({
-            templatesFolder : './templates',
             markdownFolder : './posts',
-            outFolder : './web',
-            blogName : 'My blog'
-            blogDescription : 'Your blog description here',
-            baseUrl : 'https://example.com
+            outFolder : './web'
         })
     })()
 
-- Set site name and other general features in /settings.env
-- Modify markup in /templates
-- Add CSS to /web/static/css
-- Add JS to /web/static/js or /frontend (for webpack)
-- Add blog posts to /posts folder as .md files
+Server the contents of ./web with whatever HTTP server you want, example
+    
+    cd ./web
+    python -m SimpleHTTPServer
 
 ## Requirements
 
 - NodeJS 8 or higher
 
-## Setup
+## Posts
 
-    npm install -g webpack
-    npm install -g webpack-cli
-    npm install
-
-## Watch
-
-Run
-
-    npm start
-
-to live-build all changes to /frontend and /posts. Content is served at
-
-    http://localhost:3000
-
-If you want to serve the content with another webserver (say Python)
-
-    cd /web
-    python -m SimpleHTTPServer 3000
-
-## Build only
-
-To build all blog posts (such as in your CI/CD system) run
-
-    npm run build 
-
-output is /web. 
-
-## Post structure
-
+- Each markdown file becomes a post.
 - A post file's name will become its url.
 
 ### Post data headers
 
-Each post file has a YML-like data header. This header consists of name:value lines, and is terminated with at least three dashes.
+You can add an optional YML-like header to a markfile to add to it. This header consists of name:value lines, and is terminated with at least three dashes.
    
     title: 10 reasons cats exist, you won't believe 11
     date: 2000-12-25
     tags: cats, pets, mammals, existentialist horror
     description: An in-depth analysis into whether cats exist, or do we?
     menu: true
-    mycatnames: Cathulu, Innsmeouth, Mountains of Meowdness
     category: philosophy/existentialist/horror
+    mycatnames: Cathulu, Innsmeouth, Mountains of Meowdness
     ---
     ## Are cats our cosmic overlords?
 
-    Here is some fascinating markdown about cats
+    Here is some fascinating markdown about cats ...
 
 The following fields are supported :
 
@@ -103,6 +71,7 @@ The following fields are supported :
 - description : OPTIONAL. Appears in the RSS feed and on the archive list.
 - menu: OPTIONAL. If set to true, a link to the post will be added to the blog header.
 - category: OPTIONAL. If set, post url will follow folder structure the given string.
+- mycatnames: a custom data field
 
 ##### Custom date fields
 
