@@ -3,26 +3,27 @@
     {{#content "body"}}
         {{>post post}}
 
-        <div class="pager">
-            <div class="pager-previous">
-                {{#if previousPost}}
-                    Previous :
-                    <a href="{{previousPost.url}}">{{previousPost.title}}</a>
-                {{/if}}
-            </div>
-            <div class="pager-next">
-                {{#if nextPost}}
-                    Next : 
-                    <a href="{{nextPost.url}}">{{nextPost.title}}</a>
-                {{/if}}
-            </div>
-        </div>        
-
+        {{#if enableTimeline}}
+            <div class="pager">
+                <div class="pager-previous">
+                    {{#if previousPost}}
+                        Previous :
+                        <a href="{{previousPost.url}}">{{previousPost.title}}</a>
+                    {{/if}}
+                </div>
+                <div class="pager-next">
+                    {{#if nextPost}}
+                        Next : 
+                        <a href="{{nextPost.url}}">{{nextPost.title}}</a>
+                    {{/if}}
+                </div>
+            </div>        
+        {{/if}}
+        
     {{/content}}
 
     {{#content "footer"}}
-        <a href="/tags">Tags</a> | 
-        <a href="/archive/archive.html">All posts</a>
+        {{>footer}}
     {{/content}}
 
 {{/extend}}

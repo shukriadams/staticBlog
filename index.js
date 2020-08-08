@@ -97,7 +97,11 @@ module.exports = async (options = {})=>{
 
     for (const postPath of postPaths){
 
-        let post = {},
+        let post = {
+                // default post values go here
+                publish : true,
+                enableTimeline : true
+            },
             content = fs.readFileSync(postPath, 'utf8'),
             lines = content.split('\n'),
             // post url is its entire path under ./posts, minus extension, for example "./posts/foo/bar.md" becomes "/foo/bar".
@@ -176,9 +180,11 @@ module.exports = async (options = {})=>{
         // keywords are primarily intended for metadata, and are simply the concatenated tag list
         post.keywords = post.tags.join(',');
 
-        postsHash[postNameOnDisk] = post
+        if (post.publish === true)
+            postsHash[postNameOnDisk] = post
+        else
+            console.log(`Post ${postNameOnDisk} will not be published`)
     }
-
 
     // index.html is reserved, warn user if post called "index" is found
     if (postsHash.index){
@@ -212,7 +218,7 @@ module.exports = async (options = {})=>{
     posts = posts.sort((a, b)=>{ 
         return a.date > b.date ? -1 :
         a.date < b.date ? 1 :
-        0;
+        0
     })
 
 
@@ -228,18 +234,18 @@ module.exports = async (options = {})=>{
     // generate html page for each post
     for (let i = 0; i < posts.length; i ++){
         let post = posts[i],
-            previousPost = null;
-            nextPost = null;
+            previousPost = null
+            nextPost = null
 
         if (i > 0)
-            nextPost = posts[i - 1];
+            nextPost = posts[i - 1]
 
         if (i < posts.length -1)
-            previousPost = posts[i + 1];
+            previousPost = posts[i + 1]
 
         let rendered = templates.post({ previousPost, nextPost, post, blogName : opts.blogName, menuItems });
         let postPath =`${path.join(opts.outFolder, post.filename)}.html`;
-        fs.ensureDirSync(path.dirname(postPath));
+        fs.ensureDirSync(path.dirname(postPath))
         
         // strip <pre> indentation, this normalized padded for code blocks etc
         rendered = stripIndent(rendered);

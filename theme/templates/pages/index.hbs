@@ -4,19 +4,24 @@
 
         <div class="index">
             {{#each posts}}
-                {{>post this}}
+                <div class="index-item">
+                    <a class="index-itemLink" href="{{url}}">
+                        <h2>{{title}}</h2>
+                        {{ago date}}
+                    </a>
+                </div>
             {{/each}}
         </div>
 
         <div class="pager">
             <div class="pager-previous">
                 {{#isDefined prev}}
-                    <a href="/index{{#neq prev 0}}-{{prev}}{{/neq}}.html">Previous</a>
+                    <a href="/index{{#neq prev 0}}-{{prev}}{{/neq}}.html">Older</a>
                 {{/isDefined}}
             </div>
             <div class="pager-next">
                 {{#isDefined next}}
-                    <a href="/index{{#neq next 0}}-{{next}}{{/neq}}.html">Next</a>
+                    <a href="/index{{#neq next 0}}-{{next}}{{/neq}}.html">Newer</a>
                 {{/isDefined}}
             </div>
         </div>
@@ -24,8 +29,7 @@
     {{/content}}
 
     {{#content "footer"}}
-        <a href="/tags">Tags</a> | 
-        <a href="/archive/archive.html">All posts</a>
+        {{>footer}}
     {{/content}}    
 
 {{/extend}}
