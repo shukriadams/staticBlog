@@ -4,6 +4,7 @@
         allowHeaderless: true,
         themeFolder : './theme',
         markdownFolder : './example/posts',
+        block: ['/blockme/blocked'],
         outFolder : './example/web',
     })
 })()

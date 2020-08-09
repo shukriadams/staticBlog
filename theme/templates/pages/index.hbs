@@ -6,8 +6,27 @@
             {{#each posts}}
                 <div class="index-item">
                     <a class="index-itemLink" href="{{url}}">
-                        <h2>{{title}}</h2>
-                        {{ago date}}
+                        <div class="index-itemLinkContent">
+                            <h2 class="index-itemHeader">{{title}}</h2>
+                            
+                            {{#if isUpdated}}
+                                <div>
+                                    {{shortDate updated}} ({{ago updated}})
+                                </div>
+                            {{else if date}}
+                                <div>
+                                    {{shortDate date}} ({{ago date}})
+                                </div>
+                            {{/if}}
+
+                            {{#if description}}
+                                <p>{{description}}</p>
+                            {{/if}}
+
+                        </div>
+                        {{#if hero}}
+                            <img class="index-itemHero" src="{{hero}}" />
+                        {{/if}} 
                     </a>
                 </div>
             {{/each}}

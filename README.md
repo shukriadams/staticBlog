@@ -1,17 +1,23 @@
 
 # Static Blog
 
-Makes a blog out of any markdown files. 
+## Why?
 
-- Store your markdown files in git, organized by folder
-- supports static assets like image files
-- renders static HTML so you can host on even the simplest web server
-- Markup is written in Handlebars, and can be organized as separate, re-useable themes
+There are plenty of static blog rendering engines out there, this one does the following things specifically 
+
+- Uses markdown as its source. Markdown is a wonderful source format because it's human readable yet generic enough to be supported by multiple render systems. It's basically the document equivalent of JSON. By writing content in markdown, that content is easily portable to other engines, as well as being human-readable. Your posts will not be mangled into an SQL data model and spread across multiple tables in a unique database instance that you will have to carry with your forever. No, you can store your posts in a git repo, and write them using any editor you want.
+- Requires minimal boilerplate - this engine will render any collection of markdown files, requiring only package.json and a single build file. 
+- Uses Handlebars for markup. This is still my favorite templating engine.
+- Markup can be organized into themes
+
+## Standard Blog Features
+
+- supports static assets
+- Supports organzing post and related assets by folder
 - Supports tags
 - Supports pinning of posts to header
 - Includes support for client-side text search 
 - Includes RSS feed
-
 
 ## Simple use
 

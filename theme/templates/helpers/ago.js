@@ -1,7 +1,14 @@
-let ago = require('s-ago').default,
+const ago = require('s-ago').default,
     Handlebars = require('handlebars')
 
 Handlebars.registerHelper('ago', function(date){
-    return ago(date)
+    if (!date)
+        return ''
+
+    try {
+        return ago(date)
+    } catch(ex){
+        return ''
+    }
 })
 

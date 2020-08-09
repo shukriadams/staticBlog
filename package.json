@@ -8,8 +8,8 @@
     "engines": {
         "node": ">=8"
     },
-    "scripts" : {
-        "build" : "webpack --mode none"
+    "scripts": {
+        "build": "webpack --mode none"
     },
     "dependencies": {
         "sitemap": "2.1.0",
@@ -39,6 +39,7 @@
         "react-dom": "16.6.3",
         "react-router-dom": "4.2.2",
         "webpack": "4.27.1",
+        "madscience-node-exec": "https://github.com/shukriadams/node-exec.git#0.0.6",
         "madscience-fsUtils": "https://github.com/shukriadams/node-fsUtils.git#0.0.4",
         "webpack-cli": "3.1.2"
     }

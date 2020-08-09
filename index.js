@@ -5,6 +5,7 @@ module.exports = async (options = {})=>{
         path = require('path'),
         fs = require('fs-extra'),
         process = require('process'),
+        exec = require('madscience-node-exec'),
         showdown  = require('showdown'),
         Handlebars = require('handlebars'),
         layouts = require('handlebars-layouts'),
@@ -23,13 +24,27 @@ module.exports = async (options = {})=>{
     const opts = Object.assign({
             defaultHero : '',
             baseUrl :'https://example.com',
+            useGitHistoryForDates : true,
             staticContentFileGlob : '**/*.{png,gif,jpg}',
             prettifyUrls: true,
-            blogDescription  : 'Your blog description here',
-            blogName : 'Your blog name here', 
-            pageSize : 10,
+            
+            pageSize : 9,
             archivePageSize : 10,
             allowHeaderless : false,
+            showUpdateDates : true,
+
+            // an array of post paths never to publish
+            block : [],
+
+            // Use this model to set properties for all pages
+            commonModel : {
+                name : 'Your blog name here',
+                description : 'Your blog description here',
+                footer : {
+                    text : `Copyright ${new Date().getFullYear()}`
+                }
+            },
+
             themeFolder : path.join(__dirname, 'theme'),
             markdownFolder : path.join(__dirname, 'posts'),
             outFolder : path.join(__dirname, 'web'),
@@ -100,12 +115,15 @@ module.exports = async (options = {})=>{
         let post = {
                 // default post values go here
                 publish : true,
-                enableTimeline : true
+                showTimeline : true
             },
             content = fs.readFileSync(postPath, 'utf8'),
             lines = content.split('\n'),
             // post url is its entire path under ./posts, minus extension, for example "./posts/foo/bar.md" becomes "/foo/bar".
             postNameOnDisk = postPath.substring(markdownFolder.length).match(/(.*).md/).pop() // remove leading "/posts" and file extension
+
+        if (opts.block.includes(postNameOnDisk))
+            continue
 
         // find the position of the dividing line between post data and markup. dividing line is 3 or more dashes
         let dividerLineCount = null
@@ -151,39 +169,54 @@ module.exports = async (options = {})=>{
 
         // force hero path to be relative to post, if the hero path starts with './'
         if (post.hero.startsWith('./'))
-            post.hero = `${path.dirname(postNameOnDisk)}/${post.hero.substring(2)}`;
+            post.hero = `${path.dirname(postNameOnDisk)}/${post.hero.substring(2)}`
 
         // remove empty items from tags list
-        post.tags = post.tags.split(',').filter((tag)=>{ return tag.length > 0;}); 
+        post.tags = post.tags.split(',').filter((tag)=>{ return tag.length > 0;})
 
         // remove whitespace around each tag
-        post.tags = post.tags.map((tag)=>{return tag.trim()}); 
+        post.tags = post.tags.map((tag)=>{return tag.trim()}) 
 
-        // force convert date string to date object. Any valid JS datestring is valid.
-        post.date = new Date(post.date);
-        if (isNaN(post.date)){
-            const stats = fs.statSync(postPath)
-            post.date = stats.mtime
-            console.error(`WARNING : post ${postNameOnDisk} has an invalid or missing date, falling back to file date.`)
+        if (!opts.showUpdateDates)
+            post.updated = null
+
+        // get update date from git if none set
+        if (opts.showUpdateDates && opts.useGitHistoryForDates && !post.updated){
+            const updateCheck = await exec.sh({  cmd : `git log -1 --pretty="format:%ci" ${postPath}` })
+            if (updateCheck.code === 0)
+                post.updated = new Date(updateCheck.result)
         }
 
+        // try to parse the date given in the header 
+        if (post.date){
+            try {
+                post.date = new Date(post.date)
+            } catch(ex){
+                console.log(`WARNING : ${postPath} contains an invalid date ${post.date}`)
+            }
+        }
+
+        post.isUpdated = post.updated > post.date
+
         // post url is locked to the relative path+name of its markdown file
-        post.url = `${postNameOnDisk}.html`;
+        post.url = `${postNameOnDisk}.html`
         if (opts.prettifyUrls && post.url.toLowerCase().endsWith('/index.html'))
-            post.url = path.dirname(postNameOnDisk);
+            post.url = path.dirname(postNameOnDisk)
 
         // markdown is everything after data line divider
-        post.markdown = lines.slice(dividerLineCount + 1).join('\n');
+        post.markdown = lines.slice(dividerLineCount + 1).join('\n')
 
-        post.markup = converter.makeHtml(post.markdown);
+        post.markup = converter.makeHtml(post.markdown)
 
         // keywords are primarily intended for metadata, and are simply the concatenated tag list
-        post.keywords = post.tags.join(',');
+        post.keywords = post.tags.join(',')
 
-        if (post.publish === true)
-            postsHash[postNameOnDisk] = post
-        else
+        post.common = opts.commonModel
+
+        if (post.block == 'true')
             console.log(`Post ${postNameOnDisk} will not be published`)
+        else
+            postsHash[postNameOnDisk] = post
     }
 
     // index.html is reserved, warn user if post called "index" is found
@@ -206,30 +239,44 @@ module.exports = async (options = {})=>{
     // convert posts object into posts array
     // also build up array of posts which must appear as header menu items
     for (const prop in postsHash){
-        let post = postsHash[prop];
-        post.filename = prop;
-        posts.push(post);
+        const post = postsHash[prop]
+        post.filename = prop
+        posts.push(post)
 
         if (post.menu)
-            menuItems.push(post);
+            menuItems.push(post)
     }
 
     // sort all posts by descending date
+    
     posts = posts.sort((a, b)=>{ 
-        return a.date > b.date ? -1 :
-        a.date < b.date ? 1 :
-        0
+        let dateA = a.date,
+            dateB = b.date
+
+        if (a.isUpdated)
+            dateA = a.updated
+
+        if (b.isUpdated)
+            dateB = b.updated
+
+        if (!dateA)
+            dateA = new Date('1970-1-1')
+            
+        if (!dateB)
+            dateA = new Date('1970-1-1')
+
+        return dateA > dateB ? -1 :
+            dateA < dateB ? 1 :
+            0
     })
-
-
+    
     // assign weight to each post, this is used for rendering size
     for (let i = 0 ; i < posts.length ; i ++){
         let post = posts[i];
         post.weight = i === 0 ? 'Top' :
             i < 3 ? 'Medium' : 
-            'Standard';
+            'Standard'
     }
-
 
     // generate html page for each post
     for (let i = 0; i < posts.length; i ++){
@@ -243,32 +290,39 @@ module.exports = async (options = {})=>{
         if (i < posts.length -1)
             previousPost = posts[i + 1]
 
-        let rendered = templates.post({ previousPost, nextPost, post, blogName : opts.blogName, menuItems });
-        let postPath =`${path.join(opts.outFolder, post.filename)}.html`;
+        let rendered = templates.post({ 
+                previousPost, 
+                nextPost, 
+                post, 
+                common: opts.commonModel,
+                blogName : opts.blogName, 
+                menuItems 
+            }),
+            postPath =`${path.join(opts.outFolder, post.filename)}.html`
+
         fs.ensureDirSync(path.dirname(postPath))
         
         // strip <pre> indentation, this normalized padded for code blocks etc
-        rendered = stripIndent(rendered);
+        rendered = stripIndent(rendered)
 
-        fs.writeFileSync(postPath, rendered);
-        console.log(`Published ${post.filename}`);
+        fs.writeFileSync(postPath, rendered)
+        console.log(`Published ${post.filename}`)
     }
 
     // context is the "public" data that will be sent to all plugins. This needs to contain everything that plugins
     // need to do their work
     let context = {
-        blogName : opts.blogName,
         blogDescription : opts.blogDescription,
         baseUrl : opts.baseUrl,
         outFolder : opts.outFolder,
         posts,
         menuItems,
         templates
-    };
+    }
 
 
     // create archive pages
-    paginate(context, posts, 'archive', 'archive', opts.archivePageSize, {}, archiveFolder);
+    paginate(context, posts, 'archive', 'archive', opts.archivePageSize, { common : opts.commonModel }, archiveFolder);
 
 
     // get unique list of all tags across all posts
@@ -283,7 +337,7 @@ module.exports = async (options = {})=>{
         const urlFriendlyTag = tag.replace(/\s/g, '-'),
             postsWithTag = posts.filter((post)=> { return post.tags.includes(tag) });
 
-        paginate(context, postsWithTag, urlFriendlyTag, 'tag', opts.archivePageSize, { title : tag, urlFriendlyTag }, tagsFolder);
+        paginate(context, postsWithTag, urlFriendlyTag, 'tag', opts.archivePageSize, { title : tag, urlFriendlyTag , common : opts.commonModel }, tagsFolder);
         console.log(`Published index page(s) for tag ${tag}`);
 
         tagCloud.push({
@@ -294,10 +348,14 @@ module.exports = async (options = {})=>{
     }
 
     // tags page
-    fs.writeFileSync(path.join(tagsFolder, 'index.html'), templates.tags({ menuItems, blogName : opts.blogName, tags : tagCloud}));
+    fs.writeFileSync(path.join(tagsFolder, 'index.html'), templates.tags({ 
+        menuItems, 
+        common : opts.commonModel, 
+        tags : tagCloud 
+    }))
 
     // create index page
-    paginate(context, posts, 'index', 'index', opts.pageSize, {}, opts.outFolder)
+    paginate(context, posts, 'index', 'index', opts.pageSize, {  common : opts.commonModel }, opts.outFolder)
 
     // if static folder exists in theme, copy all to deploy path
     if (await fs.exists(opts.staticFolder))

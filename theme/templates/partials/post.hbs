@@ -10,8 +10,14 @@
     {{#if date}}
         <div class="post-date">   
             {{shortDate date}} ({{ago date}})
+            {{#if isUpdated}}
+                <div>
+                    Updated {{shortDate updated}} ({{ago updated}})
+                </div>
+            {{/if}}
         </div>
     {{/if}}
+
 
     {{#if tags.length}}
         <div class="post-tags">

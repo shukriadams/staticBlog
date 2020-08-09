@@ -1,6 +1,6 @@
 title : Links
 date : 2019-03-10
 menu: true
-enableTimeline : false
+showTimeline : false
 ---
-A page that would have contained lots of links.
+Links to interesting things ...
