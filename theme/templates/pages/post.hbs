@@ -3,7 +3,7 @@
     {{#content "body"}}
         {{>post post}}
 
-        {{#if showTimeline}}
+        {{#eq post.showTimeline true}}
             <div class="pager">
                 <div class="pager-previous">
                     {{#if previousPost}}
@@ -18,7 +18,7 @@
                     {{/if}}
                 </div>
             </div>        
-        {{/if}}
+        {{/eq}}
         
     {{/content}}
 

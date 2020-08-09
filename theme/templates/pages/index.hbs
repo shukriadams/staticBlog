@@ -9,18 +9,24 @@
                         <div class="index-itemLinkContent">
                             <h2 class="index-itemHeader">{{title}}</h2>
                             
+                            {{#if description}}
+                                <p>{{description}}</p>
+                            {{/if}}
+
                             {{#if isUpdated}}
-                                <div>
+                                <div class="index-itemDate">
                                     {{shortDate updated}} ({{ago updated}})
                                 </div>
                             {{else if date}}
-                                <div>
+                                <div class="index-itemDate">
                                     {{shortDate date}} ({{ago date}})
                                 </div>
                             {{/if}}
 
-                            {{#if description}}
-                                <p>{{description}}</p>
+                            {{#if tags.length}}
+                                <div class="index-itemTags">
+                                    Topics : {{{arrayJoin tags}}}
+                                </div>
                             {{/if}}
 
                         </div>

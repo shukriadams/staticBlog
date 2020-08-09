@@ -113,7 +113,7 @@ module.exports = async (options = {})=>{
     for (const postPath of postPaths){
 
         let post = {
-                // default post values go here
+                // default post model values go here
                 publish : true,
                 showTimeline : true
             },
@@ -172,7 +172,7 @@ module.exports = async (options = {})=>{
             post.hero = `${path.dirname(postNameOnDisk)}/${post.hero.substring(2)}`
 
         // remove empty items from tags list
-        post.tags = post.tags.split(',').filter((tag)=>{ return tag.length > 0;})
+        post.tags = post.tags.split(',').filter((tag)=>{ return tag.length > 0 })
 
         // remove whitespace around each tag
         post.tags = post.tags.map((tag)=>{return tag.trim()}) 
@@ -212,7 +212,7 @@ module.exports = async (options = {})=>{
         post.keywords = post.tags.join(',')
 
         post.common = opts.commonModel
-
+        console.log(postNameOnDisk, post.showTimeline)
         if (post.block == 'true')
             console.log(`Post ${postNameOnDisk} will not be published`)
         else
