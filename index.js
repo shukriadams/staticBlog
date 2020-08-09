@@ -1,10 +1,8 @@
 module.exports = async (options = {})=>{
 
-    let 
-        glob = require('glob'),
+    let glob = require('glob'),
         path = require('path'),
         fs = require('fs-extra'),
-        process = require('process'),
         exec = require('madscience-node-exec'),
         showdown  = require('showdown'),
         Handlebars = require('handlebars'),
@@ -19,9 +17,8 @@ module.exports = async (options = {})=>{
         postsHash = {},
         posts = [],
         tags = {},
-        menuItems = []
-
-    const opts = Object.assign({
+        menuItems = [],
+        opts = Object.assign({
             defaultHero : '',
             baseUrl :'https://example.com',
             useGitHistoryForDates : true,
@@ -114,8 +111,7 @@ module.exports = async (options = {})=>{
 
         let post = {
                 // default post model values go here
-                publish : true,
-                showTimeline : true
+                publish : true
             },
             content = fs.readFileSync(postPath, 'utf8'),
             lines = content.split('\n'),
@@ -127,12 +123,12 @@ module.exports = async (options = {})=>{
 
         // find the position of the dividing line between post data and markup. dividing line is 3 or more dashes
         let dividerLineCount = null
-        for (let i = 0; i < lines.length; i ++){
+        for (let i = 0; i < lines.length; i ++)
             if (lines[i].match(/-{3,}/)){
                 dividerLineCount = i
                 break
             }
-        }
+        
 
         if (!opts.allowHeaderless && !dividerLineCount){
             console.log(`WARNING : post ${postNameOnDisk} does not contain a valid data header, it won't be published.`)
@@ -144,7 +140,7 @@ module.exports = async (options = {})=>{
             let lineIndex = 0
             while (lineIndex < dividerLineCount){
     
-                let groups = lines[lineIndex].match(/(.*?):(.*)/);
+                let groups = lines[lineIndex].match(/(.*?):(.*)/)
                 if (!groups || groups.length !== 3){
                     console.error(`WARNING : ${lines[lineIndex]} in post ${postNameOnDisk} is not properly formatted, NAME:VALUE is expected.`)
                     lineIndex ++
@@ -156,30 +152,33 @@ module.exports = async (options = {})=>{
             }
         }
 
+        // if post has no title, fall back to post file name
         if (!post.title){
             post.title = fsUtils.fileNameWithoutExtension(postPath)
             console.error(`WARNING : post "${postNameOnDisk}" has an empty title, falling back to filename.`)
         }
 
-        // tags are optional, if none are defined, create empty list. tags must be entered as comma-separated
-        // list, but are converted to array
-        post.tags = post.tags || ''
-        post.hero = post.hero || opts.defaultHero
 
+        // HERO //////////////////////////////////////////////////////////////
+        post.hero = post.hero || opts.defaultHero
 
         // force hero path to be relative to post, if the hero path starts with './'
         if (post.hero.startsWith('./'))
             post.hero = `${path.dirname(postNameOnDisk)}/${post.hero.substring(2)}`
 
+
+        // TAGS //////////////////////////////////////////////////////////////
+        // tags are optional, if none are defined, create empty list. tags must be entered as comma-separated
+        // list, but are converted to array
+        post.tags = post.tags || ''
         // remove empty items from tags list
         post.tags = post.tags.split(',').filter((tag)=>{ return tag.length > 0 })
 
         // remove whitespace around each tag
         post.tags = post.tags.map((tag)=>{return tag.trim()}) 
 
-        if (!opts.showUpdateDates)
-            post.updated = null
 
+        // DATES //////////////////////////////////////////////////////////////
         // get update date from git if none set
         if (opts.showUpdateDates && opts.useGitHistoryForDates && !post.updated){
             const updateCheck = await exec.sh({  cmd : `git log -1 --pretty="format:%ci" ${postPath}` })
@@ -203,12 +202,11 @@ module.exports = async (options = {})=>{
         if (opts.prettifyUrls && post.url.toLowerCase().endsWith('/index.html'))
             post.url = path.dirname(postNameOnDisk)
 
-        // markdown is everything after data line divider
+        // render markdown - markdown is everything after the header location
         post.markdown = lines.slice(dividerLineCount + 1).join('\n')
-
         post.markup = converter.makeHtml(post.markdown)
 
-        // keywords are primarily intended for metadata, and are simply the concatenated tag list
+        // keywords are intended for HTML header metadata, and are simply the concatenated tag list
         post.keywords = post.tags.join(',')
 
         post.common = opts.commonModel
@@ -219,10 +217,9 @@ module.exports = async (options = {})=>{
     }
 
     // index.html is reserved, warn user if post called "index" is found
-    if (postsHash.index){
-        console.error('WARNING - you have a post called "index", this name is reserved and will always be overwritten');
-    }
-
+    if (postsHash.index)
+        console.error('WARNING - you have a post called "index", this name is reserved and will always be overwritten')
+    
 
     // sync static files from ./posts folder 
     const staticFiles = glob.sync(path.join(markdownFolder, `${opts.staticContentFileGlob}`)) 
