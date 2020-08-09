@@ -212,7 +212,6 @@ module.exports = async (options = {})=>{
         post.keywords = post.tags.join(',')
 
         post.common = opts.commonModel
-        console.log(postNameOnDisk, post.showTimeline)
         if (post.block == 'true')
             console.log(`Post ${postNameOnDisk} will not be published`)
         else
