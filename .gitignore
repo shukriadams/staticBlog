@@ -3,7 +3,6 @@
 /vagrant/ubuntu-xenial-16.04-cloudimg-console.log
 /yarn-error.log
 /example/web/*
-!/example/web/static
 /example/web/static/js/webpack.js
 /yarn.lock
 /package-lock.json
