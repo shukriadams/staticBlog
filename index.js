@@ -23,7 +23,6 @@ module.exports = async (options = {})=>{
             baseUrl :'https://example.com',
             useGitHistoryForDates : true,
             staticContentFileGlob : '**/*.{png,gif,jpg}',
-            prettifyUrls: true,
             
             pageSize : 9,
             archivePageSize : 10,
@@ -103,6 +102,7 @@ module.exports = async (options = {})=>{
      * Note as well that the field "markup" is reserved, and will end up containing the markup rendered from markdown content
      */ 
     const markdownFolder = path.resolve(opts.markdownFolder),
+        postUrls = [],
         postPaths = glob.sync(path.join(markdownFolder, '**/*.md'))
 
     console.log(`found ${postPaths.length} posts to render.`)
@@ -114,11 +114,12 @@ module.exports = async (options = {})=>{
                 publish : true
             },
             content = fs.readFileSync(postPath, 'utf8'),
-            lines = content.split('\n'),
-            // post url is its entire path under ./posts, minus extension, for example "./posts/foo/bar.md" becomes "/foo/bar".
-            postNameOnDisk = postPath.substring(markdownFolder.length).match(/(.*).md/).pop() // remove leading "/posts" and file extension
+            lines = content.split('\n')
 
-        if (opts.block.includes(postNameOnDisk))
+        // post default url is its entire path under ./posts, minus extension, for example "./posts/foo/bar.md" becomes "/foo/bar".
+        post.postNameOnDisk = postPath.substring(markdownFolder.length).match(/(.*).md/).pop() // remove leading "/posts" and file extension
+
+        if (opts.block.includes(post.postNameOnDisk))
             continue
 
         // find the position of the dividing line between post data and markup. dividing line is 3 or more dashes
@@ -131,7 +132,7 @@ module.exports = async (options = {})=>{
         
 
         if (!opts.allowHeaderless && !dividerLineCount){
-            console.log(`WARNING : post ${postNameOnDisk} does not contain a valid data header, it won't be published.`)
+            console.log(`WARNING : post ${post.postNameOnDisk} does not contain a valid data header, it won't be published.`)
             continue
         }
 
@@ -142,7 +143,7 @@ module.exports = async (options = {})=>{
     
                 let groups = lines[lineIndex].match(/(.*?):(.*)/)
                 if (!groups || groups.length !== 3){
-                    console.error(`WARNING : ${lines[lineIndex]} in post ${postNameOnDisk} is not properly formatted, NAME:VALUE is expected.`)
+                    console.error(`WARNING : ${lines[lineIndex]} in post ${post.postNameOnDisk} is not properly formatted, NAME:VALUE is expected.`)
                     lineIndex ++
                     continue
                 }
@@ -155,8 +156,20 @@ module.exports = async (options = {})=>{
         // if post has no title, fall back to post file name
         if (!post.title){
             post.title = fsUtils.fileNameWithoutExtension(postPath)
-            console.error(`WARNING : post "${postNameOnDisk}" has an empty title, falling back to filename.`)
+            console.error(`WARNING : post "${post.postNameOnDisk}" has an empty title, falling back to filename.`)
         }
+
+        
+        // URL //////////////////////////////////////////////////////////////
+        // if post url is not explicitly set then we use the file relative path for url
+        if (!post.url)
+            post.url = post.postNameOnDisk
+
+        // ensure url is unique
+        if (postUrls.includes(post.url))
+            return console.log(`ERROR : the post url ${post.url} is bound more than once. Url is either set in a header twice, or is set once but collides with anther post path`)
+
+        postUrls.push(post.url)
 
 
         // HERO //////////////////////////////////////////////////////////////
@@ -164,7 +177,7 @@ module.exports = async (options = {})=>{
 
         // force hero path to be relative to post, if the hero path starts with './'
         if (post.hero.startsWith('./'))
-            post.hero = `${path.dirname(postNameOnDisk)}/${post.hero.substring(2)}`
+            post.hero = `${path.dirname(post.url)}/${post.hero.substring(2)}`
 
 
         // TAGS //////////////////////////////////////////////////////////////
@@ -197,11 +210,6 @@ module.exports = async (options = {})=>{
 
         post.isUpdated = post.updated > post.date
 
-        // post url is locked to the relative path+name of its markdown file
-        post.url = `${postNameOnDisk}.html`
-        if (opts.prettifyUrls && post.url.toLowerCase().endsWith('/index.html'))
-            post.url = path.dirname(postNameOnDisk)
-
         // render markdown - markdown is everything after the header location
         post.markdown = lines.slice(dividerLineCount + 1).join('\n')
         post.markup = converter.makeHtml(post.markdown)
@@ -209,11 +217,13 @@ module.exports = async (options = {})=>{
         // keywords are intended for HTML header metadata, and are simply the concatenated tag list
         post.keywords = post.tags.join(',')
 
+        // pass common model to each post 
         post.common = opts.commonModel
-        if (post.block == 'true')
-            console.log(`Post ${postNameOnDisk} will not be published`)
+
+        if (post.block === 'true')// header model is string only
+            console.log(`Post ${post.postNameOnDisk} will not be published`)
         else
-            postsHash[postNameOnDisk] = post
+            postsHash[post.url] = post
     }
 
     // index.html is reserved, warn user if post called "index" is found
@@ -236,7 +246,6 @@ module.exports = async (options = {})=>{
     // also build up array of posts which must appear as header menu items
     for (const prop in postsHash){
         const post = postsHash[prop]
-        post.filename = prop
         posts.push(post)
 
         if (post.menu)
@@ -294,7 +303,7 @@ module.exports = async (options = {})=>{
                 blogName : opts.blogName, 
                 menuItems 
             }),
-            postPath =`${path.join(opts.outFolder, post.filename)}.html`
+            postPath =`${path.join(opts.outFolder, post.url)}/index.html`
 
         fs.ensureDirSync(path.dirname(postPath))
         
@@ -302,7 +311,7 @@ module.exports = async (options = {})=>{
         rendered = stripIndent(rendered)
 
         fs.writeFileSync(postPath, rendered)
-        console.log(`Published ${post.filename}`)
+        console.log(`Published ${post.postNameOnDisk}`)
     }
 
     // context is the "public" data that will be sent to all plugins. This needs to contain everything that plugins
