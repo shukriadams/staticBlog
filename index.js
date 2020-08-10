@@ -194,9 +194,13 @@ module.exports = async (options = {})=>{
         // DATES //////////////////////////////////////////////////////////////
         // get update date from git if none set
         if (opts.showUpdateDates && opts.useGitHistoryForDates && !post.updated){
-            const updateCheck = await exec.sh({  cmd : `git log -1 --pretty="format:%ci" ${postPath}` })
-            if (updateCheck.code === 0)
-                post.updated = new Date(updateCheck.result)
+            try {
+                const updateCheck = await exec.sh({  cmd : `git log -1 --pretty="format:%ci" ${postPath}` })
+                if (updateCheck.code === 0)
+                    post.updated = new Date(updateCheck.result)
+            } catch (ex){
+                console.log(`error reading git history of file ${postPath} - ${ex}`)
+            }
         }
 
         // try to parse the date given in the header 
