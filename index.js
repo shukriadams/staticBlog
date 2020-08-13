@@ -162,8 +162,11 @@ module.exports = async (options = {})=>{
         
         // URL //////////////////////////////////////////////////////////////
         // if post url is not explicitly set then we use the file relative path for url
-        if (!post.url)
+        if (!post.url){
             post.url = post.postNameOnDisk
+            if (fsUtils.fileNameWithoutExtension(post.postNameOnDisk).toLowerCase() === 'index')
+                post.url = path.dirname(post.postNameOnDisk)
+        }
 
         // ensure url is unique
         if (postUrls.includes(post.url))
