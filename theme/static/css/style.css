@@ -47,6 +47,10 @@ h1, h2, h3, p, ul, ol {
     padding: 0;
 }
 
+h2, h3 {
+    padding-top: calc(var(--verticalRhythm)* 3 );
+}
+
 ul, ol {
     padding-left: calc(var(--margin) * 2);
 }
@@ -473,9 +477,7 @@ Post
     padding-top: var(--margin);
 }
 
-.post h1, 
-.post h2, 
-.post h3 {
+.post h1 {
     padding-top: var(--verticalRhythm);
 }
 
