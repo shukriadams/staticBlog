@@ -306,6 +306,7 @@ module.exports = async (options = {})=>{
                 previousPost, 
                 nextPost, 
                 post, 
+                headTitle : `${post.title} - ${opts.commonModel.name}`,
                 common: opts.commonModel,
                 blogName : opts.blogName, 
                 menuItems 
@@ -334,7 +335,12 @@ module.exports = async (options = {})=>{
 
 
     // create archive pages
-    paginate(context, posts, 'archive', 'archive', opts.archivePageSize, { common : opts.commonModel }, archiveFolder);
+    paginate(context, posts, 'archive', 'archive', opts.archivePageSize, 
+        { 
+            headTitle: `Archive - ${opts.commonModel.name}`,
+            common : opts.commonModel 
+        }, 
+        archiveFolder);
 
 
     // get unique list of all tags across all posts
@@ -349,7 +355,13 @@ module.exports = async (options = {})=>{
         const urlFriendlyTag = tag.replace(/\s/g, '-'),
             postsWithTag = posts.filter((post)=> { return post.tags.includes(tag) });
 
-        paginate(context, postsWithTag, urlFriendlyTag, 'tag', opts.archivePageSize, { title : tag, urlFriendlyTag , common : opts.commonModel }, tagsFolder);
+        paginate(context, postsWithTag, urlFriendlyTag, 'tag', opts.archivePageSize, { 
+            title : tag, 
+            headTitle : `Tag:${tag} - ${opts.commonModel.name}`,
+            urlFriendlyTag, 
+            common : opts.commonModel 
+        }, tagsFolder)
+
         console.log(`Published index page(s) for tag ${tag}`);
 
         tagCloud.push({
@@ -362,12 +374,22 @@ module.exports = async (options = {})=>{
     // tags page
     fs.writeFileSync(path.join(tagsFolder, 'index.html'), templates.tags({ 
         menuItems, 
+        headTitle : `Tags - ${opts.commonModel.name}`,
         common : opts.commonModel, 
         tags : tagCloud 
     }))
 
     // create index page
-    paginate(context, posts, 'index', 'index', opts.pageSize, {  common : opts.commonModel }, opts.outFolder)
+    paginate(context, 
+            posts, 
+            'index', 
+            'index', 
+            opts.pageSize, 
+            {
+                headTitle : opts.commonModel.name,
+                common : opts.commonModel 
+            }, 
+            opts.outFolder)
 
     // if static folder exists in theme, copy all to deploy path
     if (await fs.exists(opts.staticFolder))
@@ -387,5 +409,4 @@ module.exports = async (options = {})=>{
     }
 
 }
-
 
