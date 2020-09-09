@@ -180,7 +180,7 @@ module.exports = async (options = {})=>{
 
         // force hero path to be relative to post, if the hero path starts with './'
         if (post.hero.startsWith('./'))
-            post.hero = `${path.dirname(post.url)}/${post.hero.substring(2)}`
+            post.hero = `${post.url}/${post.hero.substring(2)}`
 
 
         // TAGS //////////////////////////////////////////////////////////////
