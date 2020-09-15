@@ -5,7 +5,7 @@
 
 There are plenty of static blog rendering engines out there, this one does the following things specifically 
 
-- Uses markdown as its source. Markdown is a wonderful source format because it's human readable yet generic enough to be supported by multiple render systems. It's basically the document equivalent of JSON. By writing content in markdown, that content is easily portable to other engines, as well as being human-readable. Your posts will not be mangled into an SQL data model and spread across multiple tables in a unique database instance that you will have to carry with your forever. No, you can store your posts in a git repo, and write them using any editor you want.
+- Uses markdown as its source. Markdown is a wonderful source format because it's human readable yet powerful enough to be consumable by HTML render systems. It's the document equivalent of JSON. By writing content in markdown, your posts can be ported to other/future engines, while remaining readably by you. Your work will not be mangled and locked inside an SQL database that you will have to carry with you forever. Store your posts in a git repo, on your harddisk, on a cloud drive, even under your mattress. Edit them in any text editor you want. Go, be free!
 - Requires minimal boilerplate - this engine will render any collection of markdown files, requiring only package.json and a single build file. 
 - Uses Handlebars for markup. This is still my favorite templating engine.
 - Markup can be organized into themes
@@ -43,6 +43,8 @@ Server the contents of ./web with whatever HTTP server you want, example
     
     cd ./web
     python -m SimpleHTTPServer
+
+Upload the contents of ./web to any HTTP web server and you're golden.
 
 ## Requirements
 
