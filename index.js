@@ -4,6 +4,7 @@ module.exports = async (options = {})=>{
         path = require('path'),
         fs = require('fs-extra'),
         exec = require('madscience-node-exec'),
+        childProcess = require('child_process'),
         showdown  = require('showdown'),
         Handlebars = require('handlebars'),
         layouts = require('handlebars-layouts'),
@@ -40,7 +41,7 @@ module.exports = async (options = {})=>{
                     text : `Copyright ${new Date().getFullYear()}`
                 }
             },
-
+            coreFolder : path.join(__dirname, 'theme', 'static'),
             themeFolder : path.join(__dirname, 'theme'),
             markdownFolder : path.join(__dirname, 'posts'),
             outFolder : path.join(__dirname, 'web'),
@@ -50,7 +51,23 @@ module.exports = async (options = {})=>{
         }, options),
         tagsFolder = path.join(opts.outFolder, 'tags'),
         archiveFolder = path.join(opts.outFolder, 'archive')
-    
+        
+    const webpackBuild = async ()=>{
+        return new Promise((resolve, reject)=>{
+            try {
+                var child = childProcess.exec('npm run build', { cwd  : __dirname } )
+                child.stdout.pipe(process.stdout)
+                child.on('exit', ()=>{
+                    resolve()
+                })
+            } catch (ex) {
+                reject(ex)
+            }
+        })
+    }
+
+    await webpackBuild()
+
     opts.staticFolder = path.join(opts.themeFolder, 'static')
     opts.templatesFolder = path.join(opts.themeFolder, 'templates')
     if (!await fs.exists(opts.templatesFolder))
@@ -392,6 +409,8 @@ module.exports = async (options = {})=>{
             opts.outFolder)
 
     // if static folder exists in theme, copy all to deploy path
+    await fs.copy(opts.coreFolder, path.join(opts.outFolder, 'static'))
+
     if (await fs.exists(opts.staticFolder))
         await fs.copy(opts.staticFolder, path.join(opts.outFolder, 'static'))
 
