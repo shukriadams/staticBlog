@@ -115,9 +115,6 @@ document.addEventListener('click', function onClick(e){
     if (e.target.classList.contains('header-menuToggleMenu'))
         toggleMenu()
 
-    if (!searchBar.contains(e.target))
-        closeSearch()
-
     if (e.target.classList.contains('header-menuToggleSearch') || e.target.parentNode.classList.contains('header-searchToggle'))
         toggleSearch()
 
