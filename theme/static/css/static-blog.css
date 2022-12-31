@@ -132,6 +132,12 @@ Header
     white-space: nowrap;
 }
 
+@media all and (max-width: 767px) {
+    .header-title {
+        font-size: 26px;
+    }    
+}
+
 .header-menu {
     list-style: none;
     padding: 0;
@@ -225,6 +231,11 @@ Header
     color: var(--color-white);
     padding: var(--margin);
     padding-top: 0;
+    display: none;
+}
+
+.header-searchResults--show {
+    display: block;
 }
 
 .header-searchResults a {

@@ -57,8 +57,11 @@ function search(){
         }
     });  
 
+    searchResults.classList.add('header-searchResults--show')
+
     let resultsHtml = '';
     if (results.length){
+       
         resultsHtml = `Found ${results.length} post(s).`;
         for(let result of results){
             let doc = searchEngine.documentStore.getDoc(result.ref);
@@ -84,7 +87,7 @@ function openSearch(){
 
 function closeSearch(){
     searchBar.classList.remove('header-searchBar--visible');
-
+    searchResults.classList.remove('header-searchResults--show')
 }
 
 /**
