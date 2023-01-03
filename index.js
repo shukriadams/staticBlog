@@ -16,7 +16,14 @@ module.exports = async (options = {})=>{
         }),
         templates = {},
         postsHash = {},
-        posts = [],
+
+        // array of objects from which to render standard blog pages
+        posts = [], 
+
+        // array of objects from which to render utility pages, these not shown on index page, in archive, previous / next etc
+        // use this for 404, about etc
+        utilityPages = [], 
+
         tags = {},
         menuItems = [],
         opts = Object.assign({
@@ -148,6 +155,7 @@ module.exports = async (options = {})=>{
         // post default url is its entire path under ./posts, minus extension, for example "./posts/foo/bar.md" becomes "/foo/bar".
         post.postNameOnDisk = postPath.substring(markdownFolder.length).match(/(.*).md/).pop() // remove leading "/posts" and file extension
 
+        // apply block list
         if (opts.block.includes(post.postNameOnDisk))
             continue
 
@@ -282,14 +290,18 @@ module.exports = async (options = {})=>{
     // also build up array of posts which must appear as header menu items
     for (const prop in postsHash){
         const post = postsHash[prop]
-        posts.push(post)
+    
+        if (post.menu || post.utility)
+            utilityPages.push(post)
+        else
+            posts.push(post)
 
         if (post.menu)
             menuItems.push(post)
     }
 
+
     // sort all posts by descending date
-    
     posts = posts.sort((a, b)=>{ 
         let dateA = a.date,
             dateB = b.date
@@ -351,6 +363,27 @@ module.exports = async (options = {})=>{
         console.log(`Published ${post.postNameOnDisk}`)
     }
 
+    for(let utilityPage of utilityPages){
+        let rendered = templates.post({ 
+            previousPost : null,
+            nextPost : null,
+            post : utilityPage, 
+            headTitle : `${utilityPage.title} - ${opts.commonModel.name}`,
+            common: opts.commonModel,
+            blogName : opts.blogName, 
+            menuItems 
+        }),
+        postPath =`${path.join(opts.outFolder, utilityPage.url)}/index.html`
+
+        fs.ensureDirSync(path.dirname(postPath))
+        
+        // strip <pre> indentation, this normalized padded for code blocks etc
+        rendered = stripIndent(rendered)
+
+        fs.writeFileSync(postPath, rendered)
+        console.log(`Published utility page ${utilityPage.postNameOnDisk}`)
+    }
+
     // context is the "public" data that will be sent to all plugins. This needs to contain everything that plugins
     // need to do their work
     let context = {
@@ -369,13 +402,13 @@ module.exports = async (options = {})=>{
             headTitle: `Archive - ${opts.commonModel.name}`,
             common : opts.commonModel 
         }, 
-        archiveFolder);
+        archiveFolder)
 
 
     // get unique list of all tags across all posts
     for (const post of posts)
         for (const tag of post.tags)
-            tags[tag] = '';
+            tags[tag] = ''
 
 
     // create tags page
