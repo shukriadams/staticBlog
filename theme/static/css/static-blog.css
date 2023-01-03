@@ -132,6 +132,12 @@ Header
     white-space: nowrap;
 }
 
+.header-description {
+    position: absolute;
+    bottom: -40px;
+    font-size: 12px; 
+}
+
 @media all and (max-width: 767px) {
     .header-title {
         font-size: 26px;

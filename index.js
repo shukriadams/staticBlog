@@ -43,6 +43,7 @@ module.exports = async (options = {})=>{
             },
             coreFolder : path.join(__dirname, 'theme', 'static'),
             themeFolder : path.join(__dirname, 'theme'),
+            additionalPartialsFolder: null,
             markdownFolder : path.join(__dirname, 'posts'),
             outFolder : path.join(__dirname, 'web'),
             // to make it easier to develop locally you can host static assets (css, js, images etc) in your output folder without having
@@ -85,13 +86,24 @@ module.exports = async (options = {})=>{
     for (const file of htmlFiles)
         await fs.remove(file)
 
-    // Handlebars : register partial templates
+    // Handlebars : register partial& templates
     const partialPaths = glob.sync(path.join(opts.templatesFolder, 'partials/**/*.hbs')) 
     for (const partialPath of partialPaths){
         const content = fs.readFileSync(partialPath, 'utf8'),
             name = path.basename(partialPath).match(/(.*).hbs/).pop(); 
 
         Handlebars.registerPartial(name, content);
+    }
+
+    // Handlebars : register optional additioanl partials
+    if (opts.additionalPartialsFolder){
+        const additionPartials = glob.sync(path.join(opts.additionalPartialsFolder, '**/*.hbs')) 
+        for (const additionPartial of additionPartials){
+            const content = fs.readFileSync(additionPartial, 'utf8'),
+                name = path.basename(additionPartial).match(/(.*).hbs/).pop()
+    
+            Handlebars.registerPartial(name, content);
+        }
     }
 
     // Handlebars : register templates

@@ -8,6 +8,7 @@
         <meta http-equiv="content-type" name="keywords" content="{{post.keywords}}">
         <title>{{headTitle}}</title>
         {{{block "head"}}}
+        {{>header}}
         <link rel="stylesheet" href="/static/css/static-blog.css" type="text/css">
     </head>
     <body>
@@ -18,6 +19,7 @@
                     <div class="header-structure">
                         <div class="header-logoTitleWrapper">
                             <a class="" href="/"><h1 class="header-title">{{common.name}}</h1></a>
+                            <div class="header-description">{{common.description}}</div>                            
                         </div>
 
                         <ul class="header-menu">
