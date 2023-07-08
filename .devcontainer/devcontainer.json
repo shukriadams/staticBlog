@@ -1,4 +1,4 @@
 {
-    "name": "node8",
-    "image": "shukriadams/node8build:0.0.3"
+    "name": "node12",
+    "image": "shukriadams/node12build:0.0.4"
 }
