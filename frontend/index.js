@@ -83,6 +83,7 @@ function search(){
 
 function openSearch(){
     searchBar.classList.add('header-searchBar--visible')
+    searchField.focus()
 }
 
 function closeSearch(){

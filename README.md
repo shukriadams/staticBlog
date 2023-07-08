@@ -97,3 +97,9 @@ Category is primarily an SEO concept. A post should have one category only, but 
 Tags are supported. Use the "tags" value in the post data header.
 
 Keywords is just another name for tags. The keywords meta header is rendered from whichever "tags" you've added to a post data header.
+
+## Local dev
+
+- clone repo
+- run `npm install`
+- run `node testbuild`, view at localhost:9000

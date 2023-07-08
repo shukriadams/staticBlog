@@ -8,3 +8,4 @@
 /package-lock.json
 .vscode/launch.json
 _testing
+theme/static/js/webpack.js
