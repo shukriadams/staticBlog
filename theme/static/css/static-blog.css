@@ -486,7 +486,7 @@ Post
 }
 
 .post-date {
-    padding-top: calc(var(--verticalRhythm) / 2);
+    padding: calc(var(--verticalRhythm)) 0;
     font-size: 12px;
 }
 
