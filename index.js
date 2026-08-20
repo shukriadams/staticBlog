@@ -230,6 +230,9 @@ module.exports = async (options = {})=>{
         // remove whitespace around each tag
         post.tags = post.tags.map((tag)=>{return tag.trim()}) 
 
+        // sort tags alphabetically
+        post.tags.sort((a, b) => a.localeCompare(b, 'en', {'sensitivity': 'base'}))
+
         // DATES //////////////////////////////////////////////////////////////
         // get update date from git if none set
         if (opts.showUpdateDates && opts.useGitHistoryForDates && !post.updated){
