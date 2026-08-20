@@ -230,7 +230,6 @@ module.exports = async (options = {})=>{
         // remove whitespace around each tag
         post.tags = post.tags.map((tag)=>{return tag.trim()}) 
 
-
         // DATES //////////////////////////////////////////////////////////////
         // get update date from git if none set
         if (opts.showUpdateDates && opts.useGitHistoryForDates && !post.updated){
@@ -405,10 +404,16 @@ module.exports = async (options = {})=>{
         archiveFolder)
 
 
-    // get unique list of all tags across all posts
+    // combine all tags and sort alphabetically
+    let allTags = []
     for (const post of posts)
-        for (const tag of post.tags)
-            tags[tag] = ''
+        allTags = allTags.concat(post.tags)
+
+    allTags.sort((a, b) => a.localeCompare(b, 'en', {'sensitivity': 'base'}))
+
+    // flatten tag list to unique
+    for (const tag of allTags)
+        tags[tag] = ''
 
 
     // create tags page
