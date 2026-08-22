@@ -147,7 +147,7 @@ module.exports = async (options = {})=>{
 
         let post = {
                 // default post model values go here
-                publish : true
+                publish : 'true' // if not true, post will not be published. note that header model is string only
             },
             content = fs.readFileSync(postPath, 'utf8'),
             lines = content.split('\n')
@@ -266,8 +266,8 @@ module.exports = async (options = {})=>{
         // pass common model to each post 
         post.common = opts.commonModel
 
-        if (post.block === 'true')// header model is string only
-            console.log(`Post ${post.postNameOnDisk} will not be published`)
+        if (post.publish !== 'true')// header model is string only
+            console.log(`Post ${post.postNameOnDisk} marked as do-not-publish, skipping`)
         else
             postsHash[post.url] = post
     }
